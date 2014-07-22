@@ -1,0 +1,13 @@
+{
+  "name": "pg-events",
+  "version": "0.0.1",
+  "description": "Use Postgresql as an Event Store for Node.js development",
+  "dependencies": {},
+  "devDependencies": {
+    "bluebird": "^2.2.2",
+    "chai": "^1.9.1",
+    "gulp": "^3.8.6",
+    "gulp-mocha": "^0.5.1",
+    "mocha": "^1.20.1"
+  }
+}
