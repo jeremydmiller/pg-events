@@ -78,7 +78,7 @@ describe('The SnapshotAggregator', function(){
 		store.clearAll();
 	});
 
-	var aggregator = new SnapshotAggregator('Party', store, {
+	var aggregator = new SnapshotAggregator('Party', {
 		$init: function(){
 			return {
 				active: true,
@@ -133,7 +133,7 @@ describe('The SnapshotAggregator', function(){
 		store.saveEvents(2, [e2_1, e2_2, e2_3, e2_4]);
 
 
-		expect(aggregator.latest(1)).to.deep.equal({
+		expect(aggregator.latest(store, 1)).to.deep.equal({
 			$version: 3, 
 			active: true, 
 			location: 'Baerlon', 
@@ -141,7 +141,7 @@ describe('The SnapshotAggregator', function(){
 			traveled: 16
 		});
 
-		expect(aggregator.latest(2)).to.deep.equal({
+		expect(aggregator.latest(store, 2)).to.deep.equal({
 			$version: 4,
 			active: true,
 			location: 'Camaar',
@@ -155,8 +155,8 @@ describe('The SnapshotAggregator', function(){
 		store.saveEvents(1, [e1_1, e1_2, e1_3]);
 		store.saveEvents(2, [e2_1, e2_2, e2_3, e2_4]);
 
-		aggregator.rebuild(1);
-		aggregator.rebuild(2);
+		aggregator.rebuild(store, 1);
+		aggregator.rebuild(store, 2);
 
 		expect(store.aggregates[1].data).to.deep.equal({
 			$version: 3, 
@@ -178,10 +178,10 @@ describe('The SnapshotAggregator', function(){
 
 	it('can rebuild a snapshot based on an existing snapshot', function(){
 		store.saveEvents(1, [e1_1, e1_2, e1_3]);
-		aggregator.rebuild(1);
+		aggregator.rebuild(store, 1);
 
 		store.saveEvents(1, [e1_4, e1_5]);
-		aggregator.rebuild(1);
+		aggregator.rebuild(store, 1);
 
 		expect(store.aggregates[1].data).to.deep.equal({
 			$version: 5, 
@@ -197,7 +197,7 @@ describe('The SnapshotAggregator', function(){
 		store.saveEvents(1, [e1_1, e1_2, e1_3, e1_4, e1_5]);
 		store.saveEvents(2, [e2_1, e2_2, e2_3, e2_4, e2_5]);
 
-		expect(aggregator.atVersion(1, 3)).to.deep.equal({
+		expect(aggregator.atVersion(store, 1, 3)).to.deep.equal({
 			$version: 3, 
 			active: true, 
 			location: 'Baerlon', 
@@ -206,7 +206,7 @@ describe('The SnapshotAggregator', function(){
 		});
 
 
-		expect(aggregator.atVersion(1, 5)).to.deep.equal({
+		expect(aggregator.atVersion(store, 1, 5)).to.deep.equal({
 			$version: 5, 
 			active: true, 
 			location: 'Shadar Logoth', 
@@ -214,7 +214,7 @@ describe('The SnapshotAggregator', function(){
 			traveled: 31
 		});
 
-		expect(aggregator.atVersion(2, 4)).to.deep.equal({
+		expect(aggregator.atVersion(store, 2, 4)).to.deep.equal({
 			$version: 4,
 			active: true,
 			location: 'Camaar',
