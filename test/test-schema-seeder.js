@@ -34,6 +34,8 @@ describe('The Database Seeder', function(){
 		expect(result.modules).to.include('aggregate-projector');
 		expect(result.modules).to.include('event-projector');
 		expect(result.modules).to.include('projection-store');
+		expect(result.modules).to.include('snapshot-store');
+		expect(result.modules).to.include('snapshot-aggregator');
 	});
 
 	it('should create new projection tables in the schema', function(){

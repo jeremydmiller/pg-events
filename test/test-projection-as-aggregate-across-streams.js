@@ -4,7 +4,7 @@ var projector = require("../lib/projections");
 
 describe('Aggregates across Streams', function(){
 	projector
-		.aggregate('Traveled')
+		.projectAcrossStreams('Traveled')
 		.by({
 			$init: function(){
 				return {

@@ -53,7 +53,7 @@ describe('The Projector', function(){
 			});
 
 		projector
-			.aggregate('Traveled')
+			.projectAcrossStreams('Traveled')
 			.by({
 				$init: function(){
 					return {

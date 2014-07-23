@@ -1,5 +1,5 @@
 require("../../lib/projections")
-	.aggregate('Traveled')
+	.projectAcrossStreams('Traveled')
 	.by({
 		$init: function(){
 			return {

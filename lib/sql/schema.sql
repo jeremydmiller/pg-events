@@ -1,8 +1,10 @@
 DROP TABLE IF EXISTS pge_streams CASCADE;
 CREATE TABLE pge_streams (
-	id			uuid CONSTRAINT pk_pge_streams PRIMARY KEY,
-	type		varchar(100) NOT NULL,
-	version		integer NOT NULL	
+	id					uuid CONSTRAINT pk_pge_streams PRIMARY KEY,
+	type				varchar(100) NOT NULL,
+	version				integer NOT NULL,
+	snapshot			json,
+	snapshot_version	integer	
 );
 
 
