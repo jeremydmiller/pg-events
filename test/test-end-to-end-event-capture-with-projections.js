@@ -1,5 +1,5 @@
 var uuid = require('node-uuid');
-var client = require('../lib/pg-eventstore');
+var client = require('../lib/index');
 var expect = require('chai').expect;
 var quest = require('./quest-events');
 var harness = require('./harness');

@@ -14,7 +14,7 @@ require("../../lib/projections")
 		QuestStarted: function(state, evt){
 			state.active = true;
 			state.location = evt.location;
-			state.members = evt.members;
+			state.members = evt.members.slice(0);
 
 			state.members.sort();
 		},
