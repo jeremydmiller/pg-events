@@ -1,5 +1,3 @@
-\i initializer.sql;
-\i append_events.sql;
 
 truncate table pge_streams CASCADE ;
 
@@ -12,5 +10,4 @@ select pge_initialize();
 select pge_append_event('{"data":[{"$type":"TownReached","location":"Baerlon","traveled":5}],"id":"b5b1e5a7-44b9-4c0b-b5ad-3095c732874e"}');
 
 
-select * from pge_projections_party;
-select * from pge_projections_arrival;
+select * from pge_streams;

@@ -65,6 +65,12 @@ function InMemoryAggregates(){
 	this.reset = function(){
 		this.types = [];
 	}
+
+	this.requiresSnapshotUpdate = function(type, version, snapshotVersion){
+		return false;
+	}
+
+	this.names = [];
 }
 
 describe("The EventStore Server Module", function(){
@@ -171,6 +177,7 @@ describe("The EventStore Server Module", function(){
 	describe('When appending an event to an existing stream', function(){
 		beforeEach(function(){
 			persistor.reset();
+			aggregates.reset();
 
 			eventstore.store({
 				id: 1,
