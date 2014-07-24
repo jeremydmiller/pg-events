@@ -56,15 +56,22 @@ function InMemoryProjector(){
 }
 
 function InMemoryAggregates(){
+	this.types = {};
 
+	this.streamTypeForEvent = function(eventType){
+		return this.types[eventType];
+	}
 
+	this.reset = function(){
+		this.types = [];
+	}
 }
 
 describe("The EventStore Server Module", function(){
 	var persistor = new InMemoryPersistor();
 	var projector = new InMemoryProjector();
 	var aggregates = new InMemoryAggregates();
-	var eventstore = new EventStore(persistor, projector, aggregates, {streamType: 'foo'});
+	var eventstore = new EventStore(persistor, projector, aggregates);
 	var stream = null;
 	var event = null;
 
@@ -73,6 +80,7 @@ describe("The EventStore Server Module", function(){
 		beforeEach(function(){
 			persistor.reset();
 			projector.reset();
+			aggregates.reset();
 
 			eventstore.store({
 				id: 1,
@@ -100,9 +108,44 @@ describe("The EventStore Server Module", function(){
 		});
 	});
 
+	describe('When storing an event for a new stream with no explicits for stream type and event id', function(){
+		beforeEach(function(){
+			persistor.reset();
+			projector.reset();
+			aggregates.reset();
+
+			aggregates.types['QuestStarted'] = 'Quest';
+
+			eventstore.store({
+				id: 1,
+				data: {location: 'Rivendell', $type: 'QuestStarted', $id: 4}
+			});
+
+			stream = persistor.findStream(1);
+			event = stream.events[0];
+		});
+
+		it('should create the new stream determining the stream type', function(){
+			expect(stream.type).to.equal('Quest');
+		});
+
+		it('should capture the first event with the id and event type', function(){
+			expect(event).to.deep.equal({location: 'Rivendell', $id: 4, $type: 'QuestStarted'});
+		});
+
+		it('should delegate to the projection', function(){
+			expect(projector.events[0]).to.deep.equal({id: 1, type: 'Quest', evt: {location: 'Rivendell', $id:4, $type: 'QuestStarted'}});
+		});
+	});
+
 	describe('When storing an event for a new stream with no stream type or event id', function(){
 		beforeEach(function(){
 			persistor.reset();
+			aggregates.reset();
+
+			aggregates.reset();
+
+			aggregates.types['QuestStarted'] = 'Quest';
 
 			eventstore.store({
 				id: 1,
@@ -115,7 +158,7 @@ describe("The EventStore Server Module", function(){
 
 		it('should create the new stream with the default stream type', function(){
 
-			expect(stream.type).to.equal('foo');
+			expect(stream.type).to.equal('Quest');
 		});
 
 		it('should capture the first event with an auto-generated id', function(){
