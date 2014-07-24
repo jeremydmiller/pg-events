@@ -55,10 +55,16 @@ function InMemoryProjector(){
 	return this;
 }
 
+function InMemoryAggregates(){
+
+
+}
+
 describe("The EventStore Server Module", function(){
 	var persistor = new InMemoryPersistor();
 	var projector = new InMemoryProjector();
-	var eventstore = new EventStore(persistor, projector, {streamType: 'foo'});
+	var aggregates = new InMemoryAggregates();
+	var eventstore = new EventStore(persistor, projector, aggregates, {streamType: 'foo'});
 	var stream = null;
 	var event = null;
 
