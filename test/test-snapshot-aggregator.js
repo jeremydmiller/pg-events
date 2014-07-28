@@ -29,7 +29,7 @@ function FakeStore(){
 		return this.aggregates[id];
 	}
 
-	this.persist = function(id, data, version){
+	this.persistSnapshot = function(id, data, version){
 		this.aggregates[id] = {data: data, version: version};
 	}
 
