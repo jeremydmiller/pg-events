@@ -1,4 +1,4 @@
-require('../../lib/aggregates')
+require('../../lib/projections')
 	.aggregate('Quest', {
 		$init: function(){
 			return {

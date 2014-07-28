@@ -39,7 +39,7 @@ CREATE TABLE pge_projection_definitions (
 DROP TABLE IF EXISTS pge_modules CASCADE;
 CREATE TABLE pge_modules (
 	name			varchar(100) CONSTRAINT pk_pge_modules PRIMARY KEY,
-	definition		varchar(5000) NOT NULL
+	definition		varchar(8000) NOT NULL
 );
 
 DROP TABLE IF EXISTS pge_aggregates CASCADE;

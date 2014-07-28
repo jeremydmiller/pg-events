@@ -43,27 +43,20 @@ function InMemoryPersistor(){
 
 function InMemoryProjector(){
 	this.events = [];
+	this.types = {};
 
 	this.reset = function(){
 		this.events = [];
+		this.names = [];
+		this.types = [];
 	};
 
 	this.captureEvent = function(id, type, evt){
 		this.events.push({id: id, type: type, evt: evt});
 	};
 
-	return this;
-}
-
-function InMemoryAggregates(){
-	this.types = {};
-
 	this.streamTypeForEvent = function(eventType){
 		return this.types[eventType];
-	}
-
-	this.reset = function(){
-		this.types = [];
 	}
 
 	this.requiresSnapshotUpdate = function(type, version, snapshotVersion){
@@ -71,13 +64,16 @@ function InMemoryAggregates(){
 	}
 
 	this.names = [];
+
+	return this;
 }
+
+
 
 describe("The EventStore Server Module", function(){
 	var persistor = new InMemoryPersistor();
 	var projector = new InMemoryProjector();
-	var aggregates = new InMemoryAggregates();
-	var eventstore = new EventStore(persistor, projector, aggregates);
+	var eventstore = new EventStore(persistor, projector);
 	var stream = null;
 	var event = null;
 
@@ -86,7 +82,6 @@ describe("The EventStore Server Module", function(){
 		beforeEach(function(){
 			persistor.reset();
 			projector.reset();
-			aggregates.reset();
 
 			eventstore.store({
 				id: 1,
@@ -118,9 +113,8 @@ describe("The EventStore Server Module", function(){
 		beforeEach(function(){
 			persistor.reset();
 			projector.reset();
-			aggregates.reset();
 
-			aggregates.types['QuestStarted'] = 'Quest';
+			projector.types['QuestStarted'] = 'Quest';
 
 			eventstore.store({
 				id: 1,
@@ -147,11 +141,8 @@ describe("The EventStore Server Module", function(){
 	describe('When storing an event for a new stream with no stream type or event id', function(){
 		beforeEach(function(){
 			persistor.reset();
-			aggregates.reset();
 
-			aggregates.reset();
-
-			aggregates.types['QuestStarted'] = 'Quest';
+			projector.types['QuestStarted'] = 'Quest';
 
 			eventstore.store({
 				id: 1,
@@ -177,7 +168,7 @@ describe("The EventStore Server Module", function(){
 	describe('When appending an event to an existing stream', function(){
 		beforeEach(function(){
 			persistor.reset();
-			aggregates.reset();
+
 
 			eventstore.store({
 				id: 1,

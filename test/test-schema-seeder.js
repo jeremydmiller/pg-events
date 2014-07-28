@@ -30,7 +30,6 @@ describe('The Database Seeder', function(){
 		expect(result.modules).to.include('eventstore');
 		expect(result.modules).to.include('persistor');
 		expect(result.modules).to.include('projections');
-		expect(result.modules).to.include('aggregates');
 		expect(result.modules).to.include('stream-aggregator');
 		expect(result.modules).to.include('aggregate-projector');
 		expect(result.modules).to.include('event-projector');

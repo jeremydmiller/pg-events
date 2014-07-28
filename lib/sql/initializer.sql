@@ -36,12 +36,11 @@ var console = {
 var persistor = require('persistor');
 var projector = require('projections');
 var projectionStore = require('projection-store');
-var aggregates = require('aggregates');
 
 projector.store = projectionStore;
 
 // TODO -- add some way to put in the options for defaults
-plv8.events = require('eventstore')(persistor, projector, aggregates);
+plv8.events = require('eventstore')(persistor, projector);
 
 
 

@@ -1,11 +1,11 @@
 var expect = require('chai').expect;
 
-var Aggregates = require('../lib/aggregates');
+var Aggregates = require('../lib/projections');
 
 describe('Aggregates', function(){
 
 	beforeEach(function(){
-		Aggregates.clearAll();
+		Aggregates.reset();
 	});
 
 	it('can find the stream type by event type', function(){
