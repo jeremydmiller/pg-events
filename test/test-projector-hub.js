@@ -5,9 +5,11 @@ var InMemoryStore = require("../lib/in-memory-store");
 
 
 describe('The Projector', function(){
+	var store = null;
+
 	beforeEach(function(){
 		projector.reset();
-		projector.store = new InMemoryStore();
+		store = new InMemoryStore();
 
 		projector
 			.projectStream('Quest')
@@ -73,25 +75,25 @@ describe('The Projector', function(){
 			});
 
 
-		projector.processEvent(1, 'Quest', {$type: 'QuestStarted', location: "Emond's Field"});
-		projector.processEvent(2, 'Quest', {$type: 'QuestStarted', location: "Rivendell"});
+		projector.processEvent(store, 1, 'Quest', {$type: 'QuestStarted', location: "Emond's Field"});
+		projector.processEvent(store, 2, 'Quest', {$type: 'QuestStarted', location: "Rivendell"});
 
-		projector.processEvent(1, 'Quest', {$type: 'TownReached', location: "Baerlon", traveled: 4});
-		projector.processEvent(2, 'Quest', {$type: 'TownReached', location: "Moria", traveled: 100});
+		projector.processEvent(store, 1, 'Quest', {$type: 'TownReached', location: "Baerlon", traveled: 4});
+		projector.processEvent(store, 2, 'Quest', {$type: 'TownReached', location: "Moria", traveled: 100});
 
-		projector.processEvent(1, 'Quest', {$type: 'EndOfDay', traveled: 13});
+		projector.processEvent(store, 1, 'Quest', {$type: 'EndOfDay', traveled: 13});
 
-		projector.processEvent(1, 'Quest', {$type: 'QuestEnded', location: 'The Eye of the World'});
+		projector.processEvent(store, 1, 'Quest', {$type: 'QuestEnded', location: 'The Eye of the World'});
 
 
 	});
 
 	
 	it('should execute projections by stream', function(){
-		expect(projector.store.find('Party', 1)).to.deep.equal({
+		expect(store.find('Party', 1)).to.deep.equal({
 			active:false, location: 'The Eye of the World', traveled: 17});
 
-		expect(projector.store.find('Party', 2)).to.deep.equal({
+		expect(store.find('Party', 2)).to.deep.equal({
 			active:true, location: 'Moria', traveled: 100});
 	});
 

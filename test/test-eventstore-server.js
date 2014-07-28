@@ -67,7 +67,7 @@ describe("The EventStore Server Module", function(){
 		});
 
 		it('should delegate to the projection', function(){
-			expect(projector.events[0]).to.deep.equal({id: 1, type: 'bar', evt: {location: 'Rivendell', $id:4, $type: 'QuestStarted'}});
+			expect(persistor.findStream(1).events[0]).to.deep.equal({location: 'Rivendell', $id:4, $type: 'QuestStarted'});
 		});
 	});
 
@@ -96,7 +96,7 @@ describe("The EventStore Server Module", function(){
 		});
 
 		it('should delegate to the projection', function(){
-			expect(projector.events[0]).to.deep.equal({id: 1, type: 'Quest', evt: {location: 'Rivendell', $id:4, $type: 'QuestStarted'}});
+			expect(persistor.findStream(1).events[0]).to.deep.equal({location: 'Rivendell', $id:4, $type: 'QuestStarted'});
 		});
 	});
 

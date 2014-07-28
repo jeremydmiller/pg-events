@@ -55,7 +55,7 @@ for (var i = 0; i < results.length; i++){
 persistor.buildProjectionStores(projector.views);
 
 plv8.projector = projector;
-
+plv8.store = persistor;
 plv8.cleanAll = function(){
 	plv8.execute('truncate table pge_streams CASCADE;');
 	persistor.cleanAll();

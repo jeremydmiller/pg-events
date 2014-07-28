@@ -31,5 +31,5 @@ $$ LANGUAGE plv8;
 
 
 CREATE OR REPLACE FUNCTION pge_find_view(id UUID, type varchar(100)) RETURNS JSON AS $$
-	return plv8.projector.store.find(type, id);
+	return plv8.store.findView(type, id);
 $$ LANGUAGE plv8;

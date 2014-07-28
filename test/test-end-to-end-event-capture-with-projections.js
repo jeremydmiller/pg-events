@@ -96,7 +96,7 @@ describe('End to End Event Capture and Projections', function(){
 			traveled: 16,
 			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand', 'Thom']
 		});
-
+/*
 
 		x.append(id, e1_4, e1_5);
 		x.viewShouldBe(id, 'Party', {
@@ -105,6 +105,7 @@ describe('End to End Event Capture and Projections', function(){
 			traveled: 31,
 			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand']
 		});
+*/
 	});
 
 });
