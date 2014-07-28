@@ -1,45 +1,7 @@
 var expect = require('chai').expect;
 var EventStore = require("../lib/server/eventstore");
+var InMemoryStore = require("../lib/in-memory-store");
 
-function InMemoryPersistor(){
-	this.id = 0;
-
-	this.data = {};
-
-	this.newId = function(){
-		this.id = this.id + 1;
-
-		return this.id;
-	}
-
-	this.insertStream = function(id, version, type){
-		if (version == null){
-			throw new Error('version is null');
-		}
-
-		this.data[id] = {id: id, version: version, type: type, events:[]};
-	}
-
-	this.updateStream = function(id, version){
-		this.data[id].version = version;
-	}
-
-	this.findStream = function(id){
-		return this.data[id];
-	}
-
-	this.appendEvent = function(id, version, data, eventType, eventId){
-		data.$id = eventId;
-		data.$type = eventType;
-		this.findStream(id).events.push(data);
-	}
-
-	this.reset = function(){
-		this.data = {};
-	}
-
-	return this;
-}
 
 function InMemoryProjector(){
 	this.events = [];
@@ -71,7 +33,7 @@ function InMemoryProjector(){
 
 
 describe("The EventStore Server Module", function(){
-	var persistor = new InMemoryPersistor();
+	var persistor = new InMemoryStore();
 	var projector = new InMemoryProjector();
 	var eventstore = new EventStore(persistor, projector);
 	var stream = null;

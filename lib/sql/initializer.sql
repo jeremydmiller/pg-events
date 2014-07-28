@@ -42,7 +42,7 @@ var console = {
 var persistor = require('persistor');
 var projector = require('projections');
 
-// TODO -- add some way to put in the options for defaults
+
 plv8.events = require('eventstore')(persistor, projector);
 
 

@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var SnapshotAggregator = require("../lib/snapshot-aggregator");
 var quest = require('./quest-events');
 var _ = require('lodash');
+var InMemoryStore = require('../lib/in-memory-store');
 
 var e1_1 = quest.QuestStarted("Emond's Field", ['Rand', 'Perrin', 'Mat', 'Thom', 'Egwene', 'Moiraine']);
 var e1_2 = quest.EndOfDay(5);
@@ -19,63 +20,13 @@ var e2_6 = quest.MembersJoined('Vo Wacune', ['Lelldorin']);
 var e2_7 = quest.MembersJoined('Mimbre', ['Mandorallen']);
 var e2_8 = quest.MembersDeparted('Mimbre', ['Lelldorin']);
 
-function FakeStore(){
 
-	this.aggregates = {};
-	this.events = {};
-
-
-	this.findLatest = function(id){
-		return this.aggregates[id];
-	}
-
-	this.persistSnapshot = function(id, data, version){
-		this.aggregates[id] = {data: data, version: version};
-	}
-
-	this.findEventsAfter = function(id, version){
-		return _.filter(this.events[id], function(x){
-			return x.version > version;
-		});
-	}
-
-	this.saveEvents = function(id, events){
-		var storage = this.events[id];
-		if (storage == null){
-			storage = [];
-		}
-
-		for (var i = 0; i < events.length; i++){
-			storage.push({version: storage.length + 1, data: events[i]});
-		}
-
-		this.events[id] = storage;
-	}
-
-
-	this.clearAll = function(){
-		this.aggregates = {};
-		this.events = {};
-
-	}
-
-	this.findEventsUpTo = function(id, version){
-		return _.filter(this.events[id], function(x){
-			return x.version <= version;
-		})
-		.map(function(e){
-			return e.data;
-		});
-	}
-
-	return this;
-}
 
 describe('The SnapshotAggregator', function(){
-	var store = new FakeStore();
+	var store = new InMemoryStore();
 
 	beforeEach(function(){
-		store.clearAll();
+		store.reset();
 	});
 
 	var aggregator = new SnapshotAggregator('Party', {
