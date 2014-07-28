@@ -90,10 +90,10 @@ describe('The Projector', function(){
 
 	
 	it('should execute projections by stream', function(){
-		expect(store.find('Party', 1)).to.deep.equal({
+		expect(store.findView('Party', 1)).to.deep.equal({
 			active:false, location: 'The Eye of the World', traveled: 17});
 
-		expect(store.find('Party', 2)).to.deep.equal({
+		expect(store.findView('Party', 2)).to.deep.equal({
 			active:true, location: 'Moria', traveled: 100});
 	});
 

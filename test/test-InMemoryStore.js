@@ -1,42 +1,41 @@
 var assert = require("assert")
-var projector = require("../lib/projections");
+var store = require("../lib/in-memory-store")();
 
 
 
 describe('InMemoryStore', function(){
 	describe('SimpleStore', function(){
 		it('should be able to store and retrieve values by key', function(){
-		  	var store = projector.store.byId('something');
-		  	store.update('a', 'foo');
-		  	store.update('c', 'baz');
+		  	store.updateView('quest', 'a', 'foo');
+		  	store.updateView('quest', 'c', 'baz');
 
-		  	assert.equal('foo', store.find('a'));
+		  	assert.equal('foo', store.findView('quest', 'a'));
 
-		  	store.update('a', 'bar');
-		  	assert.equal('bar', store.find('a'));
+		  	store.updateView('quest', 'a', 'bar');
+		  	assert.equal('bar', store.findView('quest', 'a'));
 		  
-		  	assert.equal('baz', store.find('c'));
+		  	assert.equal('baz', store.findView('quest', 'c'));
 
 		});
 	});
 
 	it('should be able to retrieve a store by id', function(){
-		projector.store.byId('A').update('a', '1');
-		projector.store.byId('B').update('a', '2');
-		projector.store.byId('C').update('a', '3');
+		store.updateView('A', 'a', '1');
+		store.updateView('B', 'a', '2');
+		store.updateView('C', 'a', '3');
 
-		assert.equal('1', projector.store.byId('A').find('a'));
-		assert.equal('2', projector.store.byId('B').find('a'));
-		assert.equal('3', projector.store.byId('C').find('a'));
+		assert.equal('1', store.findView('A', 'a'));
+		assert.equal('2', store.findView('B', 'a'));
+		assert.equal('3', store.findView('C', 'a'));
 	});
 
 	it('should be able to retrieve an aggregate by id', function(){
-		projector.store.byType().update('A', '1');
-		projector.store.byType().update('B', '2');
-		projector.store.byType().update('C', '3');
+		store.storeAggregate('A', '1');
+		store.storeAggregate('B', '2');
+		store.storeAggregate('C', '3');
 
-		assert.equal('1', projector.store.byType().find('A'));
-		assert.equal('2', projector.store.byType().find('B'));
-		assert.equal('3', projector.store.byType().find('C'));
+		assert.equal('1', store.findAggregate('A'));
+		assert.equal('2', store.findAggregate('B'));
+		assert.equal('3', store.findAggregate('C'));
 	});
 });
