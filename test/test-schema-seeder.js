@@ -28,12 +28,12 @@ describe('The Database Seeder', function(){
 
 	it('should load the reused javascript modules', function(){
 		expect(result.modules).to.include('eventstore');
-		expect(result.modules).to.include('persistor');
 		expect(result.modules).to.include('projections');
 		expect(result.modules).to.include('stream-aggregator');
 		expect(result.modules).to.include('aggregate-projector');
 		expect(result.modules).to.include('event-projector');
 		expect(result.modules).to.include('snapshot-aggregator');
+		expect(result.modules).to.include('postgres-store');
 	});
 
 	it('should create new projection tables in the schema', function(){

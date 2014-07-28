@@ -39,7 +39,7 @@ var console = {
 }
 
 
-var persistor = require('persistor');
+var persistor = require('postgres-store');
 var projector = require('projections');
 
 
