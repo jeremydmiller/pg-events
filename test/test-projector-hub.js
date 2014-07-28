@@ -1,11 +1,13 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var projector = require("../lib/projections");
+var InMemoryStore = require("../lib/in-memory-store");
 
 
 describe('The Projector', function(){
 	beforeEach(function(){
 		projector.reset();
+		projector.store = new InMemoryStore();
 
 		projector
 			.projectStream('Quest')

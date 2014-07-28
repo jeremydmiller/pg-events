@@ -1,6 +1,8 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var projector = require("../lib/projections");
+var InMemoryStore = require("../lib/in-memory-store");
+projector.store = new InMemoryStore();
 
 describe('Aggregates across Streams', function(){
 	projector
