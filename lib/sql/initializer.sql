@@ -52,7 +52,7 @@ for (var i = 0; i < results.length; i++){
 	eval(results[i].definition);
 }
 
-persistor.buildProjectionStores(projector.views);
+persistor.warmupViewStores(projector.views);
 
 plv8.projector = projector;
 plv8.store = persistor;
