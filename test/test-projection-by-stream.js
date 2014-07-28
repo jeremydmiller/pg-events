@@ -2,6 +2,8 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var projector = require("../lib/projections");
+var InMemoryStore = require("../lib/in-memory-store");
+projector.store = new InMemoryStore();
 
 
 
@@ -85,20 +87,22 @@ describe('Projections by Stream', function(){
 		});
 
 		describe('Applying events to existing streams', function(){
-			projection.processEvent(1, {$type: 'QuestStarted', location: "Emond's Field"});
-			projection.processEvent(2, {$type: 'QuestStarted', location: "Rivendell"});
+			var store = new InMemoryStore();
 
-			projection.processEvent(1, {$type: 'TownReached', location: "Baerlon", traveled: 4});
-			projection.processEvent(2, {$type: 'TownReached', location: "Moria", traveled: 100});
+			projection.processEvent(store, 1, {$type: 'QuestStarted', location: "Emond's Field"});
+			projection.processEvent(store, 2, {$type: 'QuestStarted', location: "Rivendell"});
 
-			projection.processEvent(1, {$type: 'EndOfDay', traveled: 13});
+			projection.processEvent(store, 1, {$type: 'TownReached', location: "Baerlon", traveled: 4});
+			projection.processEvent(store, 2, {$type: 'TownReached', location: "Moria", traveled: 100});
+
+			projection.processEvent(store, 1, {$type: 'EndOfDay', traveled: 13});
 
 
-			var state1 = projection.store.find(1);
+			var state1 = store.findView(projection.name, 1);
 			expect(state1).to.deep.equal({location: 'Baerlon', active: true, traveled: 17});
 
 
-			var state2 = projection.store.find(2);
+			var state2 = store.findView(projection.name, 2);
 			expect(state2).to.deep.equal({location: 'Moria', active: true, traveled: 100});
 
 
