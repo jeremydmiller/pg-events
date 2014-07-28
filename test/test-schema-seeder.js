@@ -33,7 +33,6 @@ describe('The Database Seeder', function(){
 		expect(result.modules).to.include('stream-aggregator');
 		expect(result.modules).to.include('aggregate-projector');
 		expect(result.modules).to.include('event-projector');
-		expect(result.modules).to.include('projection-store');
 		expect(result.modules).to.include('snapshot-aggregator');
 	});
 
