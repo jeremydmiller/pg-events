@@ -4,8 +4,6 @@ var expect = require('chai').expect;
 var quest = require('./quest-events');
 var harness = require('./harness');
 
-require('when/monitor/console');
-
 var e1_1 = quest.QuestStarted("Emond's Field", ['Rand', 'Perrin', 'Mat', 'Thom', 'Egwene', 'Moiraine']);
 var e1_2 = quest.EndOfDay(5);
 var e1_3 = quest.TownReached('Baerlon', 11);
@@ -96,7 +94,7 @@ describe('End to End Event Capture and Projections', function(){
 			traveled: 16,
 			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand', 'Thom']
 		});
-/*
+
 
 		x.append(id, e1_4, e1_5);
 		x.viewShouldBe(id, 'Party', {
@@ -105,7 +103,9 @@ describe('End to End Event Capture and Projections', function(){
 			traveled: 31,
 			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand']
 		});
-*/
+
 	});
+
+
 
 });

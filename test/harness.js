@@ -61,6 +61,28 @@ function Harness(){
 		});
 	}
 
+	this.snapshotShouldBe = function(id, expected){
+		this.steps.push(function(promise){
+			return promise.then(function(){
+				return client.fetchCurrentSnapshot(id)
+					.then(function(snapshot){
+						expect(snapshot).to.deep.equal(expected);
+					});
+			});
+		});
+	}
+
+	this.snapshotShouldBeNull = function(id){
+		this.steps.push(function(promise){
+			return promise.then(function(){
+				return client.fetchCurrentSnapshot(id)
+					.then(function(s){
+						expect(s).to.be.null;
+					});
+			});
+		});
+	}
+
 	this.execute = function(client){
 		var promise = Promise.resolve(null);
 
