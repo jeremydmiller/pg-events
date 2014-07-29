@@ -83,6 +83,17 @@ function Harness(){
 		});
 	}
 
+	this.latestAggregateShouldBe = function(id, expected){
+		this.steps.push(function(promise){
+			return promise.then(function(){
+				return client.fetchLatestAggregate(id)
+					.then(function(x){
+						expect(x).to.deep.equal(expected);
+					});
+			});
+		});
+	}
+
 	this.execute = function(client){
 		var promise = Promise.resolve(null);
 

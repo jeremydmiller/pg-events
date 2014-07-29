@@ -23,7 +23,7 @@ function scenario(text, func){
 	});
 }
 
-describe.only('End to End Snapshot Aggregation', function(){
+describe('End to End Snapshot Aggregation', function(){
 	before(function(){
 		return harness.seed();
 	});
@@ -73,4 +73,28 @@ describe.only('End to End Snapshot Aggregation', function(){
 		// did not change
 		x.snapshotShouldBe(id, {$version: 12, active: true, location: 'Austin', traveled: 0, members: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k']});
 	});
+
+	scenario('can build and fetch the latest with no snapshot', function(x){
+		var id = uuid.v4();
+		x.append(id, e0, e1, e2);
+		x.snapshotShouldBeNull();
+
+		x.latestAggregateShouldBe(id, {$version: 3, active: true, location: 'Austin', traveled: 0, members: ['a', 'b']});
+	
+		x.append(id, e3);
+		x.snapshotShouldBeNull();
+
+		x.latestAggregateShouldBe(id, {$version: 4, active: true, location: 'Austin', traveled: 0, members: ['a', 'b', 'c']});
+		
+	});
+
+	scenario('can build and fetch the latest on top of a snapshot', function(x){
+		var id = uuid.v4();
+
+		x.append(id, e0, e1, e2, e3, e4);
+		x.append(id, e5, e6);
+
+		x.latestAggregateShouldBe(id, {$version: 7, active: true, location: 'Austin', traveled: 0, members: ['a', 'b', 'c', 'd', 'e', 'f']})
+	});
+
 });

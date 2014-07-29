@@ -33,3 +33,8 @@ $$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION pge_find_view(id UUID, type varchar(100)) RETURNS JSON AS $$
 	return plv8.store.findView(type, id);
 $$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION pge_fetch_latest_aggregate(id UUID) RETURNS JSON AS $$
+	return plv8.events.buildAggregate(id);
+$$ LANGUAGE plv8;
