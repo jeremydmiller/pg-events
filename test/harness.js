@@ -6,52 +6,43 @@ var expect = require('chai').expect;
 var client = require('../lib/index');
 client.start({connection: connection, projection_folder: projectionFolder});
 
+
+
 function Harness(){
 	this.steps = [];
 
+	var self = this;
+
 	this.append = function(){
 		var message = client.toEventMessage(arguments);
+		self.lastId = message.id;
 
-		this.steps.push(function(promise){
-			return promise.then(function(){
-				return client.append(message);
-			});
+		this.steps.push(function*(){
+			yield client.append(message);
 		});
 	}
 
 	this.stream = function(){
+		var id = self.id;
+		var assertion = null;
 		if (arguments.length == 2){
-			var id = arguments[0];
-			var assertion = arguments[1];
-
-			this.steps.push(function(promise){
-				return promise.then(function(){
-					return client.fetchStream(id)
-						.then(assertion);
-				});
-			});
+			id = arguments[0];
+			assertion = arguments[1];
+		}
+		else{
+			assertion = arguments[0];
 		}
 
-		if (arguments.length == 1){
-			var assertion = arguments[0];
-
-			this.steps.push(function(promise){
-				return promise.then(function(result){
-					return client.fetchStream(result.id)
-						.then(assertion);
-				});
-			});
-		}
-
-
+		this.steps.push(function*(){
+			var s = yield client.fetchStream(id);
+			assertion(s);
+		});
 	}
 
 	this.view = function(id, view, func){
-		this.steps.push(function(promise){
-			return promise.then(function(){
-				return client.fetchView(id, view)
-					.then(func);
-			});
+		this.steps.push(function*(){
+			var view = yield client.fetchView(id, view);
+			func(view);
 		});
 	}
 
@@ -62,46 +53,32 @@ function Harness(){
 	}
 
 	this.snapshotShouldBe = function(id, expected){
-		this.steps.push(function(promise){
-			return promise.then(function(){
-				return client.fetchCurrentSnapshot(id)
-					.then(function(snapshot){
-						expect(snapshot).to.deep.equal(expected);
-					});
-			});
+		this.steps.push(function*(){
+			var snapshot = yield client.fetchCurrentSnapshot(id);
+			expect(snapshot).to.deep.equal(expected);
 		});
 	}
 
 	this.snapshotShouldBeNull = function(id){
-		this.steps.push(function(promise){
-			return promise.then(function(){
-				return client.fetchCurrentSnapshot(id)
-					.then(function(s){
-						expect(s).to.be.null;
-					});
-			});
+		this.steps.push(function*(){
+			var snapshot = yield client.fetchCurrentSnapshot(id);
+			expect(snapshot).to.be.null;
 		});
 	}
 
 	this.latestAggregateShouldBe = function(id, expected){
-		this.steps.push(function(promise){
-			return promise.then(function(){
-				return client.fetchLatestAggregate(id)
-					.then(function(x){
-						expect(x).to.deep.equal(expected);
-					});
-			});
+		this.steps.push(function*(){
+			var x = yield client.fetchLatestAggregate(id);
+			expect(x).to.deep.equal(expected);
 		});
 	}
 
 	this.execute = function(client){
-		var promise = Promise.resolve(null);
-
-		this.steps.forEach(function(step){
-			promise = step(promise);
+		return Promise.coroutine(function*(){
+			this.steps.forEach(function(s){
+				yield* s;
+			});
 		});
-
-		return promise;
 	}
 }
 
