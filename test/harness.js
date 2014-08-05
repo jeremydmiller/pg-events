@@ -105,20 +105,19 @@ function Harness(){
 	}
 }
 
-
+var seeded = false;
+var projections = null;
 
 module.exports = {
-	seeded: false,
-
 	seed: function(){
-		if (this.seeded){
-			return Promise.resolve(this.projections);
+		if (seeded){
+			return Promise.resolve(projections);
 		}
 
 		return client.config.seedAll({connection: connection, projection_folder: projectionFolder})
 			.then(function(result){
-				this.seeded = true;
-				this.projections = result; 
+				seeded = true;
+				projections = result; 
 				
 				return result;
 			});
@@ -126,6 +125,12 @@ module.exports = {
 	},
 
 	cleanAll: function(done){
+		if (!seeded){
+			return this.seed().then(function(){
+				return client.config.cleanAll();
+			});
+		}
+
 		return client.config.cleanAll();
 	},
 
