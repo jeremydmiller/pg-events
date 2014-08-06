@@ -1,0 +1,4 @@
+{
+    "database": "postgres://jeremill:@localhost/projections",
+    "projections": "test/projections"
+}
