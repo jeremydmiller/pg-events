@@ -1,13 +1,41 @@
 {
   "name": "pg-events",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Use Postgresql as an Event Store for Node.js development",
-  "dependencies": {},
+  "keywords": [
+    "postgres",
+    "pg",
+    "postgresql",
+    "eventstore",
+    "projections"
+  ],
+  "license" : "Apache-2.0",
+  "homepage": "https://github.com/jeremydmiller/pg-events",
+  "repository":{
+      "type": "git",
+      "url": "git@github.com:jeremydmiller/pg-events.git"
+    },
+  "author": "Jeremy D. Miller <jeremydmiller@yahoo.com>",
+  "main": "./lib",
+  "files": ["lib"],
+  "dependencies": {
+      "minimist": "^0.2.0",
+      "node-uuid": "^1.4.1",
+      "pg": "^3.4.0",
+      "postgres-gen": "^0.5.0",
+      "when": "^3.4.2",
+      "bluebird": "^2.2.2"
+    },
   "devDependencies": {
-    "bluebird": "^2.2.2",
     "chai": "^1.9.1",
     "gulp": "^3.8.6",
     "gulp-mocha": "^0.5.1",
     "mocha": "^1.20.1"
+  },
+  "engines": {
+    "node": ">= 0.11.0"
+  },
+  "bin": {
+    "pg-events": "lib/cli.js"
   }
 }
