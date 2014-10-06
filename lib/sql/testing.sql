@@ -94,6 +94,8 @@ $$ LANGUAGE plpgsql;
 
 select pge_seed_rolling_buffer();
 
+CLUSTER pge_rolling_buffer USING pk_pge_rolling_buffer;
+
 select count(*) from pge_rolling_buffer;
 
 select pge_append_rolling_buffer(uuid_generate_v4(), uuid_generate_v4());
