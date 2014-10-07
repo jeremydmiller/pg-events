@@ -1,7 +1,9 @@
 require("../../lib/projections")
-	.projectStream('Quest')
-	.named('Party')
-	.by({
+	.projectStream({
+		name: 'Party',
+		stream: 'Quest', 
+		async: false,
+
 		$init: function(){
 			return {
 				active: true,

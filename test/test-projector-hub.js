@@ -12,9 +12,11 @@ describe('The Projector', function(){
 		store = new InMemoryStore();
 
 		projector
-			.projectStream('Quest')
-			.named('Party')
-			.by({
+			.projectStream({
+				name: 'Party',
+				stream: 'Quest',
+				async: false,
+
 				$init: function(){
 					return {
 						active: true,

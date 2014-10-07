@@ -10,19 +10,42 @@ projector.store = new InMemoryStore();
 describe('Projections by Stream', function(){
 	it('uses a default $init function if none is provided', function(){
 		var projection = projector
-			.projectStream('Quest')
-			.named('Party')
-			.by({});
+			.projectStream({
+				name: 'Party',
+				stream: 'Quest'
+			});
 
 		var state = projection.applyEvent(null, {$type: 'QuestStarted'});
 		assert.notEqual(null, state);
 	});
 
+	it('should be async by default', function(){
+		var projection = projector
+			.projectStream({
+				name: 'Party',
+				stream: 'Quest'
+			});
+
+		expect(projection.async).to.be.true;
+	});
+
+	it('should be able to be set to sync', function(){
+		var projection = projector
+			.projectStream({
+				name: 'Party',
+				stream: 'Quest',
+				async: false
+			});
+
+		expect(projection.async).to.be.false;
+	});
+
 	describe('Simple Projection', function(){
 		projector
-			.projectStream('Quest')
-			.named('Party')
-			.by({
+			.projectStream({
+				name: 'Party',
+				stream: 'Quest',
+
 				$init: function(){
 					return {
 						active: true,
