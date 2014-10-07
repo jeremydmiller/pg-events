@@ -52,5 +52,23 @@ describe('Projecting an event', function(){
 
 		expect(projection.async).to.be.true;
 	});
+
+	it('can be sync', function(){
+		var projection = projector.projectEvent({
+			event: 'TownReached',
+			name: 'Arrival',
+			async: false,
+			transform: function(evt){
+				id = id + 1;
+
+				return {
+					town: evt.location,
+					$id: id
+				};
+			}
+		});
+
+		expect(projection.async).to.be.false;
+	});
 });
 
