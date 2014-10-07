@@ -1,5 +1,6 @@
 require('../../lib/projections')
-	.aggregate('Quest', {
+	.aggregate({
+		stream: 'Quest',
 		$init: function(){
 			return {
 				active: true,

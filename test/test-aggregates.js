@@ -9,20 +9,23 @@ describe('Aggregates', function(){
 	});
 
 	it('can find the stream type by event type', function(){
-		Aggregates.aggregate('Quest', {
+		Aggregates.aggregate({
+			stream: 'Quest',
 			QuestStarted: function(s, e){},
 			QuestFinished: function(s, e){},
 			TownReached: function(s, e){},
 		});
 
-		Aggregates.aggregate('User', {
+		Aggregates.aggregate({
+			stream: 'User',
 			UserCreated: function(s, e){},
 			PasswordChanged: function(s, e){},
 			RoleGranted: function(s, e){},
 			UserDeactivated: function(s, e){},
 		});
 
-		Aggregates.aggregate('Invoice', {
+		Aggregates.aggregate({
+			stream: 'Invoice',
 			InvoiceCreated: function(s, e){},
 			InvoiceReviewed: function(s, e){},
 			InvoiceApproved: function(s, e){},
@@ -38,7 +41,8 @@ describe('Aggregates', function(){
 	});
 
 	it('determines whether a snapshot is required with the default age of 5', function(){
-		Aggregates.aggregate('Quest', {
+		Aggregates.aggregate({
+			stream: 'Quest',
 			QuestStarted: function(s, e){},
 			QuestFinished: function(s, e){},
 			TownReached: function(s, e){},
