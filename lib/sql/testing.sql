@@ -14,35 +14,38 @@ truncate table pge_streams CASCADE ;
 --select pge_fetch_latest_aggregate('b5b1e5a7-44b9-4c0b-b5ad-3095c732874e');
 
 
-CREATE OR REPLACE FUNCTION pge_append_event(message json) RETURNS JSON AS $$
+CREATE OR REPLACE FUNCTION pge_undefined_append_rolling_buffer(event UUID, stream UUID) RETURNS integer AS $$
 DECLARE
-	--streamId UUID;
-	events JSON[];
-	msg VARCHAR[100];
+	id int := nextval('pge_undefined_rolling_buffer_sequence');
+	next int;
 BEGIN
-	--streamId := message::json->'id';
-	
-msg := message::json->'id';
-	raise notice 'hello %', msg;
-	
+	next := id % 200;
 
-/*
-	if (plv8.events == null){
-		plv8.execute('select pge_initialize()');
-	}
+	update pge_undefined_rolling_buffer
+		SET
+			timestamp = current_timestamp,
+			message_id = id,
+			event_id = event,
+			stream_id = stream,
+			reference_count = reference_count + 1
+		WHERE
+			slot = next;
 
-	return plv8.events.store(message);
-*/
+		-- Try again if it's filled up
+        IF NOT found THEN
+            select pg_sleep(.100);
+			update pge_undefined_rolling_buffer
+				SET
+					timestamp = current_timestamp,
+					message_id = id,
+					event_id = event,
+					stream_id = stream,
+					reference_count = reference_count + 1
+				WHERE
+					slot = next AND reference_count = 0;
+		        END IF;
 
-	return '{"id": "1", "stream": "2"}';
-
+	RETURN id;
 END
 $$ LANGUAGE plpgsql;
-
-
-
-select pge_append_event('{"data":[{"$type":"TownReached","location":"Baerlon","traveled":5}],"id":"b5b1e5a7-44b9-4c0b-b5ad-3095c732874e"}');
---select pge_append_event('{"data":[{"$type":"TownReached","location":"Caemlyn","traveled":5}],"id":"b5b1e5a7-44b9-4c0b-b5ad-3095c732874e"}');
-
-
 select * from pge_streams;

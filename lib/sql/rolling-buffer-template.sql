@@ -1,5 +1,5 @@
 DROP SEQUENCE IF EXISTS pge_$NAME$_rolling_buffer_sequence;
-CREATE SEQUENCE pge_$NAME$_rolling_buffer_sequence START WITH 0;
+CREATE SEQUENCE pge_$NAME$_rolling_buffer_sequence START WITH 1;
 
 DROP TABLE IF EXISTS pge_$NAME$_rolling_buffer CASCADE;
 CREATE TABLE pge_$NAME$_rolling_buffer (
@@ -53,7 +53,7 @@ BEGIN
 
 		-- Try again if it's filled up
         IF NOT found THEN
-            pg_sleep(.100);
+            select pg_sleep(.100);
 			update pge_$NAME$_rolling_buffer
 				SET
 					timestamp = current_timestamp,

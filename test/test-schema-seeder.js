@@ -42,6 +42,11 @@ describe('The Database Seeder', function(){
 		expect(result.tables).to.include('pge_projections_arrival');
 	});
 
+
+	it('should create new event queue tables in the schema', function(){
+		expect(result.tables).to.include('pge_traveled_rolling_buffer');
+	});
+
 	it('should be able to load all the projections from a folder path', function(){
 		var projector = require('../lib/projections');
 		var files = projector.loadProjectionsFromFolder(projectionFolder);
@@ -64,7 +69,7 @@ describe('The Database Seeder', function(){
 		expect(DDL).to.include('CREATE TABLE pge_projections_Party (');
 
 		// shouldn't be adding a new table for an aggregate
-		expect(DDL).to.not.include('Traveled');
+		expect(DDL).to.not.include('pge_projections_Traveled');
 	});
 });
 
