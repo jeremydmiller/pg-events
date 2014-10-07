@@ -2,11 +2,12 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var projector = require("../lib/projections");
 var InMemoryStore = require("../lib/in-memory-store");
+var sinon = require('sinon');
 
 describe('Aggregates across Streams', function(){
 	var store = new InMemoryStore();
 
-	projector
+	var projection = projector
 		.projectAcrossStreams({
 			name: 'Traveled',
 			$init: function(){
@@ -23,6 +24,16 @@ describe('Aggregates across Streams', function(){
 				state.traveled += evt.traveled;
 			}
 		});
+
+	it('should accept a visitor', function(){
+		var visitor = {
+			aggregate: sinon.spy()
+		}
+
+		projection.acceptVisitor(visitor);
+
+		expect(visitor.aggregate.getCall(0).args[0]).to.equal(projection);
+	});
 
 	it('should be able to store and retrieve aggregates', function(){
 		store.storeAggregate("foo", {a: 1});
