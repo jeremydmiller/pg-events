@@ -11,17 +11,19 @@ describe('Projecting an event', function(){
 
 		var store = new InMemoryStore();
 
-		var projection = projector
-			.projectEvent('TownReached')
-			.named('Arrival')
-			.by(function(evt){
+		var projection = projector.projectEvent({
+			event: 'TownReached',
+			name: 'Arrival',
+			async: false,
+			transform: function(evt){
 				id = id + 1;
 
 				return {
 					town: evt.location,
 					$id: id
 				};
-			});
+			}
+		});
 
 
 		projection.processEvent(store, 1, {$id: 1, location: "Caemlyn"});
@@ -32,4 +34,23 @@ describe('Projecting an event', function(){
 		expect(store.findView(projection.name, 2)).to.deep.equal({$id: 2, town: "Four Kings"});
 		expect(store.findView(projection.name, 3)).to.deep.equal({$id: 3, town: "Whitebridge"});
 	});
+
+	it('should be async by default', function(){
+		var projection = projector.projectEvent({
+			event: 'TownReached',
+			name: 'Arrival',
+			//async: false,
+			transform: function(evt){
+				id = id + 1;
+
+				return {
+					town: evt.location,
+					$id: id
+				};
+			}
+		});
+
+		expect(projection.async).to.be.true;
+	});
 });
+

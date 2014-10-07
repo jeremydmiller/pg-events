@@ -45,15 +45,16 @@ describe('The Projector', function(){
 
 			});
 
-
-
 		projector
-			.projectEvent('TownReached')
-			.named('Arrival')
-			.by(function(evt){
-				return {
-					town: evt.location
-				};
+			.projectEvent({
+				event: 'TownReached',
+				name: 'Arrival',
+				transform: function(evt){
+					return {
+						town: evt.location
+					};
+				},
+				async: false
 			});
 
 		projector
