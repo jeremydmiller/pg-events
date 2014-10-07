@@ -7,8 +7,8 @@ describe('Aggregates across Streams', function(){
 	var store = new InMemoryStore();
 
 	projector
-		.projectAcrossStreams('Traveled')
-		.by({
+		.projectAcrossStreams({
+			name: 'Traveled',
 			$init: function(){
 				return {
 					traveled: 0

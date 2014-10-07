@@ -1,6 +1,6 @@
 require("../../lib/projections")
-	.projectAcrossStreams('Traveled')
-	.by({
+	.projectAcrossStreams({
+		name: 'Traveled',
 		$init: function(){
 			return {
 				traveled: 0

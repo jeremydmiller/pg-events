@@ -60,8 +60,8 @@ describe('The Projector', function(){
 			});
 
 		projector
-			.projectAcrossStreams('Traveled')
-			.by({
+			.projectAcrossStreams({
+				name: 'Traveled',
 				$init: function(){
 					return {
 						traveled: 0
