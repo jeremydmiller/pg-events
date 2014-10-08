@@ -13,7 +13,8 @@ describe('Projections by Stream', function(){
 		var projection = projector
 			.projectStream({
 				name: 'Party',
-				stream: 'Quest'
+				stream: 'Quest',
+				async: false
 			});
 
 		var state = projection.applyEvent(null, {$type: 'QuestStarted'});
@@ -80,6 +81,7 @@ describe('Projections by Stream', function(){
 			.projectStream({
 				name: 'Party',
 				stream: 'Quest',
+				async: false,
 
 				$init: function(){
 					return {
