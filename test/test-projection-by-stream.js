@@ -38,6 +38,29 @@ describe('Projections by Stream', function(){
 		expect(visitor.asyncByStream.getCall(0).args[0]).to.equal(projection);
 	});
 
+	it('queues to process an event in async mode', function(){
+		var projection = projector
+			.projectStream({
+				name: 'Party',
+				stream: 'Quest',
+				async: true
+			});
+
+		var store = {
+			queueProjectionEvent: sinon.spy()
+		}
+
+		var id = 1;
+		var evt = {$id: 2};
+
+		projection.processEvent(store, id, evt);
+
+		var call = store.queueProjectionEvent.getCall(0);
+
+		expect(call.args).to.deep.equal([projection.name, id, evt.$id]);
+
+	});
+
 	it('accepts a visitor in sync mode', function(){
 		var visitor = {
 			syncByStream: sinon.spy()

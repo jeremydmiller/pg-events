@@ -40,16 +40,18 @@ describe('Aggregates across Streams', function(){
 		expect(store.findAggregate("foo")).to.deep.equal({a: 1});
 	});
 
-	it('should aggregate across all streams', function(){
-		projector.processEvent(store, 1, 'anything', {$type: 'QuestStarted', location: "Emond's Field"});
-		projector.processEvent(store, 2, 'anything', {$type: 'QuestStarted', location: "Rivendell"});
+	it('should aggregate across all streams by queueing updates', function(){
+		var store = {
+			queueProjectionEvent: sinon.spy()
+		}
 
-		projector.processEvent(store, 1, 'anything', {$type: 'TownReached', location: "Baerlon", traveled: 4});
-		projector.processEvent(store, 2, 'anything', {$type: 'TownReached', location: "Moria", traveled: 100});
+		var id = 1;
+		var evt = {$id: 2};
 
-		projector.processEvent(store, 1, 'anything', {$type: 'EndOfDay', traveled: 13});
+		projection.processEvent(store, id, evt);
 
-		var aggregate = store.findAggregate('Traveled');
-		expect(aggregate).to.deep.equal({traveled: 117});
+		var call = store.queueProjectionEvent.getCall(0);
+
+		expect(call.args).to.deep.equal([projection.name, id, evt.$id]);
 	});
 });
