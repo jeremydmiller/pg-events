@@ -13,17 +13,21 @@ function Harness(){
 
 	var self = this;
 
+	this.add = function(generator){
+		this.steps.push(generator());
+	}
+
 	this.append = function(){
 		var message = client.toEventMessage(arguments);
 		self.lastId = message.id;
 
-		this.steps.push(function*(){
+		this.add(function*(){
 			yield client.append(message);
 		});
 	}
 
 	this.stream = function(){
-		var id = self.id;
+		var id = self.lastId;
 		var assertion = null;
 		if (arguments.length == 2){
 			id = arguments[0];
@@ -33,16 +37,16 @@ function Harness(){
 			assertion = arguments[0];
 		}
 
-		this.steps.push(function*(){
+		this.add(function*(){
 			var s = yield client.fetchStream(id);
 			assertion(s);
 		});
 	}
 
 	this.view = function(id, view, func){
-		this.steps.push(function*(){
-			var view = yield client.fetchView(id, view);
-			func(view);
+		this.add(function*(){
+			var state = yield client.fetchView(id, view);
+			func(state);
 		});
 	}
 
@@ -53,32 +57,43 @@ function Harness(){
 	}
 
 	this.snapshotShouldBe = function(id, expected){
-		this.steps.push(function*(){
+		this.add(function*(){
 			var snapshot = yield client.fetchCurrentSnapshot(id);
 			expect(snapshot).to.deep.equal(expected);
 		});
 	}
 
 	this.snapshotShouldBeNull = function(id){
-		this.steps.push(function*(){
+		this.add(function*(){
 			var snapshot = yield client.fetchCurrentSnapshot(id);
 			expect(snapshot).to.be.null;
 		});
 	}
 
 	this.latestAggregateShouldBe = function(id, expected){
-		this.steps.push(function*(){
+		this.add(function*(){
 			var x = yield client.fetchLatestAggregate(id);
 			expect(x).to.deep.equal(expected);
 		});
 	}
 
-	this.execute = function(client){
-		return Promise.coroutine(function*(){
-			this.steps.forEach(function(s){
-				yield* s;
-			});
+	this.dbSingleRowShouldBe = function(sql, args, expected){
+		this.add(function*(){
+			var results = yield client.query(sql, args);
+			expect(results.rows.length).to.equal(1);
+			expect(results.rows[0]).to.deep.equal(expected);
 		});
+	}
+
+	this.execute = function(client){
+		var steps = this.steps;
+
+
+		return Promise.coroutine(function*(){
+			for (var i = 0; i < steps.length; i++){
+				yield* steps[i];
+			}
+		})();
 	}
 }
 

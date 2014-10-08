@@ -32,6 +32,12 @@ function scenario(text, func){
 	});
 }
 
+function scenario_only(text, func){
+	it.only(text, function(){
+		return harness.scenario(func);
+	});
+}
+
 describe('End to End Event Capture and Projections', function(){
 	before(function(){
 		return harness.seed();

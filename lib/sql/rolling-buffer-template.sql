@@ -1,3 +1,4 @@
+
 DROP SEQUENCE IF EXISTS pge_$NAME$_rolling_buffer_sequence;
 CREATE SEQUENCE pge_$NAME$_rolling_buffer_sequence START WITH 1;
 
@@ -12,16 +13,17 @@ CREATE TABLE pge_$NAME$_rolling_buffer (
 );
 
 
+
 CREATE OR REPLACE FUNCTION pge_$NAME$_seed_rolling_buffer() RETURNS VOID AS $$
 DECLARE
 	size integer := $SIZE$;
 	i integer := 0;
 	empty UUID := uuid_nil();
 	timestamp timestamp := current_timestamp;
+	current integer;
 BEGIN
-
 	WHILE i < $SIZE$ LOOP
-		insert into pge_rolling_buffer 
+		insert into pge_$NAME$_rolling_buffer 
 			(slot, message_id, timestamp, event_id, stream_id, reference_count)
 		values
 			(i, 0, timestamp, empty, empty, 0);
@@ -32,6 +34,8 @@ BEGIN
 
 END
 $$ LANGUAGE plpgsql;
+
+select pge_$NAME$_seed_rolling_buffer();
 
 
 CREATE OR REPLACE FUNCTION pge_$NAME$_append_rolling_buffer(event UUID, stream UUID) RETURNS integer AS $$

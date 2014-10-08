@@ -23,6 +23,7 @@ function scenario(text, func){
 	});
 }
 
+
 describe('End to End Snapshot Aggregation', function(){
 	before(function(){
 		return harness.seed();

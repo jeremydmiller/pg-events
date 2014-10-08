@@ -45,17 +45,19 @@ describe('The Database Seeder', function(){
 
 	it('should create new event queue tables in the schema', function(){
 		expect(result.tables).to.include('pge_traveled_rolling_buffer');
+		expect(result.tables).to.include('pge_arrival2_rolling_buffer');
 	});
 
 	it('should be able to load all the projections from a folder path', function(){
 		var projector = require('../lib/projections');
 		var files = projector.loadProjectionsFromFolder(projectionFolder);
 
-		expect(projector.activeProjectionNames()).to.deep.equal(['Arrival', 'Party', 'Traveled']);
+		expect(projector.activeProjectionNames()).to.deep.equal(['Arrival', 'Arrival2', 'Party', 'Party2', 'Traveled']);
 	});
 
 	it('should load the content for projections into the db', function(){
 		expect(result.projections).to.include('Arrival');
+		expect(result.projections).to.include('Arrival2');
 		expect(result.projections).to.include('Party');
 		expect(result.projections).to.include('Traveled');
 	});

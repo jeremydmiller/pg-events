@@ -1,8 +1,8 @@
 require("../../lib/projections")
 	.projectEvent({
 		event: 'TownReached',
-		name: 'Arrival',
-		async: false,
+		name: 'Arrival2',
+		async: true,
 		transform: function(evt){
 			return {
 				town: evt.location,
@@ -10,7 +10,3 @@ require("../../lib/projections")
 			};
 		}
 	});
-
-
-
-
