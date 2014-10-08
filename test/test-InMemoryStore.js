@@ -1,6 +1,6 @@
 var assert = require("assert")
 var store = require("../lib/in-memory-store")();
-
+var expect = require('chai').expect;
 
 
 describe('InMemoryStore', function(){
@@ -37,5 +37,19 @@ describe('InMemoryStore', function(){
 		assert.equal('1', store.findAggregate('A'));
 		assert.equal('2', store.findAggregate('B'));
 		assert.equal('3', store.findAggregate('C'));
+	});
+
+	it('should be able to capture queued events', function(){
+		store.queueProjectionEvent('A', 1, 1);
+		store.queueProjectionEvent('A', 2, 1);
+		store.queueProjectionEvent('A', 3, 1);
+		store.queueProjectionEvent('A', 4, 2);
+		store.queueProjectionEvent('A', 5, 2);
+		store.queueProjectionEvent('B', 6, 3);
+
+		expect(store.queues['A'][0]).to.deep.equal({id: 1, stream: 1});
+		expect(store.queues['A'][1]).to.deep.equal({id: 2, stream: 1});
+		expect(store.queues['A'][2]).to.deep.equal({id: 3, stream: 1});
+		expect(store.queues['B'][0]).to.deep.equal({id: 6, stream: 3});
 	});
 });
