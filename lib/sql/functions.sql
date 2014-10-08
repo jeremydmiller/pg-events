@@ -48,3 +48,15 @@ CREATE OR REPLACE FUNCTION pge_fetch_latest_aggregate(id UUID) RETURNS JSON AS $
 
 	return plv8.events.buildAggregate(id);
 $$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION pge_apply_projection(name VARCHAR(100), state JSON, evt JSON) RETURNS JSON AS $$
+	if (plv8.events == null){
+		plv8.execute('select pge_initialize()');
+	}
+
+	// TODO: validate that the projection exists
+	return plv8.projector.projections[name].applyEvent(state, evt);
+$$ LANGUAGE plv8;
+
+

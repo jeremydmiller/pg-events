@@ -13,39 +13,21 @@ truncate table pge_streams CASCADE ;
 
 --select pge_fetch_latest_aggregate('b5b1e5a7-44b9-4c0b-b5ad-3095c732874e');
 
-
-CREATE OR REPLACE FUNCTION pge_undefined_append_rolling_buffer(event UUID, stream UUID) RETURNS integer AS $$
-DECLARE
-	id int := nextval('pge_undefined_rolling_buffer_sequence');
-	next int;
+CREATE OR REPLACE FUNCTION pge_upsert_party_view(streamId UUID, evt JSON) RETURNS VOID AS
+$$
 BEGIN
-	next := id % 200;
+	UPDATE pge_projections_party set data = pge_apply_projection('Party', data, evt) where id = streamId;
 
-	update pge_undefined_rolling_buffer
-		SET
-			timestamp = current_timestamp,
-			message_id = id,
-			event_id = event,
-			stream_id = stream,
-			reference_count = reference_count + 1
-		WHERE
-			slot = next;
-
-		-- Try again if it's filled up
-        IF NOT found THEN
-            select pg_sleep(.100);
-			update pge_undefined_rolling_buffer
-				SET
-					timestamp = current_timestamp,
-					message_id = id,
-					event_id = event,
-					stream_id = stream,
-					reference_count = reference_count + 1
-				WHERE
-					slot = next AND reference_count = 0;
-		        END IF;
-
-	RETURN id;
-END
+	-- TODO -- have it check for unique violation maybe?
+	IF NOT FOUND THEN
+		insert into pge_projections_party (id, data) values (streamId, pge_apply_projection('Party', null, evt));
+	END IF; 
+END;
 $$ LANGUAGE plpgsql;
-select * from pge_streams;
+
+
+select pge_upsert_party_view('21bdc410-f15c-11e3-a583-7325f030e4a2', '{"id":"21bdc410-f15c-11e3-a583-7325f030e4a2" ,"$type": "QuestStarted", "streamType": "Quest", "data": {"location": "Rivendell", "members": []}}');
+select pge_upsert_party_view('21bdc410-f15c-11e3-a583-7325f030e4a2', '{"id":"21bdc410-f15c-11e3-a583-7325f030e4a2" ,"$type": "TownReached", "data": {"location": "Moria", "traveled":"5"}}');
+
+
+select * from pge_projections_party;
