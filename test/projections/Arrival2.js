@@ -2,7 +2,7 @@ require("../../lib/projections")
 	.projectEvent({
 		event: 'TownReached',
 		name: 'Arrival2',
-		async: true,
+		mode: 'async',
 		transform: function(evt){
 			return {
 				town: evt.location,

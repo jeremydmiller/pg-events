@@ -14,7 +14,7 @@ describe('Projecting an event', function(){
 		var projection = projector.projectEvent({
 			event: 'TownReached',
 			name: 'Arrival',
-			async: false,
+			mode: 'sync',
 			transform: function(evt){
 				id = id + 1;
 
@@ -43,7 +43,7 @@ describe('Projecting an event', function(){
 		var projection = projector.projectEvent({
 			event: 'TownReached',
 			name: 'Arrival',
-			async: true,
+			mode: 'async',
 			transform: function(evt){
 				id = id + 1;
 
@@ -69,7 +69,7 @@ describe('Projecting an event', function(){
 		var projection = projector.projectEvent({
 			event: 'TownReached',
 			name: 'Arrival',
-			async: false,
+			mode: 'sync',
 			transform: function(evt){
 				id = id + 1;
 
@@ -90,7 +90,6 @@ describe('Projecting an event', function(){
 		var projection = projector.projectEvent({
 			event: 'TownReached',
 			name: 'Arrival',
-			//async: false,
 			transform: function(evt){
 				id = id + 1;
 
@@ -101,14 +100,14 @@ describe('Projecting an event', function(){
 			}
 		});
 
-		expect(projection.async).to.be.true;
+		expect(projection.mode).to.equal('async');
 	});
 
 	it('can be sync', function(){
 		var projection = projector.projectEvent({
 			event: 'TownReached',
 			name: 'Arrival',
-			async: false,
+			mode: 'sync',
 			transform: function(evt){
 				id = id + 1;
 
@@ -119,7 +118,7 @@ describe('Projecting an event', function(){
 			}
 		});
 
-		expect(projection.async).to.be.false;
+		expect(projection.mode).to.equal('sync');
 	});
 });
 
