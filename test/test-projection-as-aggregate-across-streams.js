@@ -40,4 +40,8 @@ describe('Aggregates across Streams', function(){
 		expect(store.findAggregate("foo")).to.deep.equal({a: 1});
 	});
 
+	it('should expose the events it listens to', function(){
+		expect(projection.events).to.deep.equal(['TownReached', 'EndOfDay']);
+	});
+
 });
