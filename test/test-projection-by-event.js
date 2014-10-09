@@ -60,6 +60,24 @@ describe('Projecting an event', function(){
 
 	});
 
+	it('should expose its event application', function(){
+		var projection = projector.projectEvent({
+			event: 'TownReached',
+			name: 'Arrival',
+			mode: 'async',
+			transform: function(evt){
+				id = id + 1;
+
+				return {
+					town: evt.location,
+					$id: id
+				};
+			}
+		});
+
+		expect(projection.events).to.deep.equal(['TownReached']);
+	});
+
 
 
 	it('should be async by default', function(){
