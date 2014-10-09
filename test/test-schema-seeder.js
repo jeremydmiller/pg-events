@@ -64,13 +64,13 @@ describe('The Database Seeder', function(){
 	it('should be able to generate all the DDL for projection tables', function(){
 		var DDL = seeder.generateDDL({projection_folder: projectionFolder});
 
-		expect(DDL).to.include('DROP TABLE IF EXISTS pge_projections_Arrival CASCADE;');
-		expect(DDL).to.include('CREATE TABLE pge_projections_Arrival (');
-		expect(DDL).to.include('DROP TABLE IF EXISTS pge_projections_Party CASCADE;');
-		expect(DDL).to.include('CREATE TABLE pge_projections_Party (');
+		expect(DDL).to.include('DROP TABLE IF EXISTS pge_projections_arrival CASCADE;');
+		expect(DDL).to.include('CREATE TABLE pge_projections_arrival');
+		expect(DDL).to.include('DROP TABLE IF EXISTS pge_projections_party CASCADE;');
+		expect(DDL).to.include('CREATE TABLE pge_projections_party');
 
 		// shouldn't be adding a new table for an aggregate
-		expect(DDL).to.not.include('pge_projections_Traveled');
+		expect(DDL).to.not.include('pge_projections_traveled');
 	});
 });
 
