@@ -15,7 +15,7 @@ describe('The Projector', function(){
 			.projectStream({
 				name: 'Party',
 				stream: 'Quest',
-				async: false,
+				mode: 'sync',
 
 				$init: function(){
 					return {

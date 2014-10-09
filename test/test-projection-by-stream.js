@@ -13,8 +13,7 @@ describe('Projections by Stream', function(){
 		var projection = projector
 			.projectStream({
 				name: 'Party',
-				stream: 'Quest',
-				async: false
+				stream: 'Quest'
 			});
 
 		var state = projection.applyEvent(null, {$type: 'QuestStarted'});
@@ -30,7 +29,7 @@ describe('Projections by Stream', function(){
 			.projectStream({
 				name: 'Party',
 				stream: 'Quest',
-				async: true
+				mode: 'async'
 			});
 
 		projection.acceptVisitor(visitor);
@@ -48,7 +47,7 @@ describe('Projections by Stream', function(){
 			.projectStream({
 				name: 'Party',
 				stream: 'Quest',
-				async: false
+				mode: 'sync'
 			});
 
 		projection.acceptVisitor(visitor);
@@ -63,7 +62,7 @@ describe('Projections by Stream', function(){
 				stream: 'Quest'
 			});
 
-		expect(projection.async).to.be.true;
+		expect(projection.mode).to.equal('async');
 	});
 
 	it('should be able to be set to sync', function(){
@@ -71,10 +70,10 @@ describe('Projections by Stream', function(){
 			.projectStream({
 				name: 'Party',
 				stream: 'Quest',
-				async: false
+				mode: 'sync'
 			});
 
-		expect(projection.async).to.be.false;
+		expect(projection.mode).to.equal('sync');
 	});
 
 	describe('Simple Projection', function(){
@@ -82,7 +81,7 @@ describe('Projections by Stream', function(){
 			.projectStream({
 				name: 'Party',
 				stream: 'Quest',
-				async: false,
+				mode: 'sync',
 
 				$init: function(){
 					return {

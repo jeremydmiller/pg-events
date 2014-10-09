@@ -2,8 +2,7 @@ require("../../lib/projections")
 	.projectStream({
 		name: 'Party2',
 		stream: 'Quest', 
-		async: true,
-		queue_size: 100,
+		mode: 'async',
 
 		$init: function(){
 			return {
