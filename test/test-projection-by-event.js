@@ -60,34 +60,6 @@ describe('Projecting an event', function(){
 
 	});
 
-	it('queues an entry for processing an event in async mode', function(){
-		var projection = projector.projectEvent({
-			event: 'TownReached',
-			name: 'Arrival',
-			async: true,
-			transform: function(evt){
-				id = id + 1;
-
-				return {
-					town: evt.location,
-					$id: id
-				};
-			}
-		});
-
-		var store = {
-			queueProjectionEvent: sinon.spy()
-		}
-
-		var id = 1;
-		var evt = {$id: 2};
-
-		projection.processEvent(store, id, evt);
-
-		var call = store.queueProjectionEvent.getCall(0);
-
-		expect(call.args).to.deep.equal([projection.name, id, evt.$id]);
-	});
 
 	it('accept a visitor for sync', function(){
 		var visitor = {

@@ -43,9 +43,8 @@ describe('The Database Seeder', function(){
 	});
 
 
-	it('should create new event queue tables in the schema', function(){
-		expect(result.tables).to.include('pge_traveled_rolling_buffer');
-		expect(result.tables).to.include('pge_arrival2_rolling_buffer');
+	it('should create the new event queue table in the schema', function(){
+		expect(result.tables).to.include('pge_rolling_buffer');
 	});
 
 	it('should be able to load all the projections from a folder path', function(){

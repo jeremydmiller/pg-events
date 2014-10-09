@@ -23,8 +23,7 @@ describe('Seeding Rolling Buffer Tables', function(){
 
 
 	scenario('can capture events for a new stream', function(x){
-		x.dbSingleRowShouldBe('select count(*) as count from pge_arrival2_rolling_buffer', [], {count: "200"});
-		x.dbSingleRowShouldBe('select count(*) as count from pge_party2_rolling_buffer', [], {count: "100"});
+		x.dbSingleRowShouldBe('select count(*) as count from pge_rolling_buffer', [], {count: "200"});
 	});
 
 

@@ -40,16 +40,16 @@ describe('InMemoryStore', function(){
 	});
 
 	it('should be able to capture queued events', function(){
-		store.queueProjectionEvent('A', 1, 1);
-		store.queueProjectionEvent('A', 2, 1);
-		store.queueProjectionEvent('A', 3, 1);
-		store.queueProjectionEvent('A', 4, 2);
-		store.queueProjectionEvent('A', 5, 2);
-		store.queueProjectionEvent('B', 6, 3);
+		store.queueProjectionEvent(1, 1);
+		store.queueProjectionEvent(2, 1);
+		store.queueProjectionEvent(3, 1);
+		store.queueProjectionEvent(4, 2);
+		store.queueProjectionEvent(5, 2);
+		store.queueProjectionEvent(6, 3);
 
-		expect(store.queues['A'][0]).to.deep.equal({id: 1, stream: 1});
-		expect(store.queues['A'][1]).to.deep.equal({id: 2, stream: 1});
-		expect(store.queues['A'][2]).to.deep.equal({id: 3, stream: 1});
-		expect(store.queues['B'][0]).to.deep.equal({id: 6, stream: 3});
+		expect(store.queue[0]).to.deep.equal({id: 1, stream: 1});
+		expect(store.queue[1]).to.deep.equal({id: 2, stream: 1});
+		expect(store.queue[2]).to.deep.equal({id: 3, stream: 1});
+		expect(store.queue[5]).to.deep.equal({id: 6, stream: 3});
 	});
 });

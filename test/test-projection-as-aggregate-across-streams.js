@@ -40,18 +40,4 @@ describe('Aggregates across Streams', function(){
 		expect(store.findAggregate("foo")).to.deep.equal({a: 1});
 	});
 
-	it('should aggregate across all streams by queueing updates', function(){
-		var store = {
-			queueProjectionEvent: sinon.spy()
-		}
-
-		var id = 1;
-		var evt = {$id: 2};
-
-		projection.processEvent(store, id, evt);
-
-		var call = store.queueProjectionEvent.getCall(0);
-
-		expect(call.args).to.deep.equal([projection.name, id, evt.$id]);
-	});
 });

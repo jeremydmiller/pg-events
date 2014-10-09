@@ -1,10 +1,10 @@
 
-DROP SEQUENCE IF EXISTS pge_$NAME$_rolling_buffer_sequence;
-CREATE SEQUENCE pge_$NAME$_rolling_buffer_sequence START WITH 1;
+DROP SEQUENCE IF EXISTS pge_rolling_buffer_sequence;
+CREATE SEQUENCE pge_rolling_buffer_sequence START WITH 1;
 
-DROP TABLE IF EXISTS pge_$NAME$_rolling_buffer CASCADE;
-CREATE TABLE pge_$NAME$_rolling_buffer (
-	slot				integer CONSTRAINT pk_pge_$NAME$_rolling_buffer PRIMARY KEY,
+DROP TABLE IF EXISTS pge_rolling_buffer CASCADE;
+CREATE TABLE pge_rolling_buffer (
+	slot				integer CONSTRAINT pk_pge_rolling_buffer PRIMARY KEY,
 	message_id			integer NOT NULL,
 	timestamp			timestamp without time zone default (now() at time zone 'utc') NOT NULL,
 	event_id			UUID NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE pge_$NAME$_rolling_buffer (
 
 
 
-CREATE OR REPLACE FUNCTION pge_$NAME$_seed_rolling_buffer() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION pge_seed_rolling_buffer() RETURNS VOID AS $$
 DECLARE
 	size integer := $SIZE$;
 	i integer := 0;
@@ -23,7 +23,7 @@ DECLARE
 	current integer;
 BEGIN
 	WHILE i < $SIZE$ LOOP
-		insert into pge_$NAME$_rolling_buffer 
+		insert into pge_rolling_buffer 
 			(slot, message_id, timestamp, event_id, stream_id, reference_count)
 		values
 			(i, 0, timestamp, empty, empty, 0);
@@ -35,17 +35,17 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-select pge_$NAME$_seed_rolling_buffer();
+select pge_seed_rolling_buffer();
 
 
-CREATE OR REPLACE FUNCTION pge_$NAME$_append_rolling_buffer(event UUID, stream UUID) RETURNS integer AS $$
+CREATE OR REPLACE FUNCTION pge_append_rolling_buffer(event UUID, stream UUID) RETURNS integer AS $$
 DECLARE
-	id int := nextval('pge_$NAME$_rolling_buffer_sequence');
+	id int := nextval('pge_rolling_buffer_sequence');
 	next int;
 BEGIN
 	next := id % $SIZE$;
 
-	update pge_$NAME$_rolling_buffer
+	update pge_rolling_buffer
 		SET
 			timestamp = current_timestamp,
 			message_id = id,
@@ -58,7 +58,7 @@ BEGIN
 		-- Try again if it's filled up
         IF NOT found THEN
             select pg_sleep(.100);
-			update pge_$NAME$_rolling_buffer
+			update pge_rolling_buffer
 				SET
 					timestamp = current_timestamp,
 					message_id = id,
