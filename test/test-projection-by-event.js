@@ -35,9 +35,9 @@ describe('Projecting an event', function(){
 		expect(store.findView(projection.name, 3)).to.deep.equal({$id: 3, town: "Whitebridge"});
 	});
 
-	it('accept a visitor for async', function(){
+	it('accept a visitor', function(){
 		var visitor = {
-			asyncByEvent: sinon.spy()
+			byEvent: sinon.spy()
 		}
 
 		var projection = projector.projectEvent({
@@ -56,35 +56,11 @@ describe('Projecting an event', function(){
 
 		projection.acceptVisitor(visitor);
 
-		expect(visitor.asyncByEvent.getCall(0).args[0]).to.equal(projection);
+		expect(visitor.byEvent.getCall(0).args[0]).to.equal(projection);
 
 	});
 
 
-	it('accept a visitor for sync', function(){
-		var visitor = {
-			syncByEvent: sinon.spy()
-		}
-
-		var projection = projector.projectEvent({
-			event: 'TownReached',
-			name: 'Arrival',
-			mode: 'sync',
-			transform: function(evt){
-				id = id + 1;
-
-				return {
-					town: evt.location,
-					$id: id
-				};
-			}
-		});
-
-		projection.acceptVisitor(visitor);
-
-		expect(visitor.syncByEvent.getCall(0).args[0]).to.equal(projection);
-
-	});
 
 	it('should be async by default', function(){
 		var projection = projector.projectEvent({

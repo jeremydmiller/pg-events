@@ -20,9 +20,9 @@ describe('Projections by Stream', function(){
 		assert.notEqual(null, state);
 	});
 
-	it('accepts a visitor in async mode', function(){
+	it('accepts a visitor ', function(){
 		var visitor = {
-			asyncByStream: sinon.spy()
+			byStream: sinon.spy()
 		}
 
 		var projection = projector
@@ -34,26 +34,10 @@ describe('Projections by Stream', function(){
 
 		projection.acceptVisitor(visitor);
 
-		expect(visitor.asyncByStream.getCall(0).args[0]).to.equal(projection);
+		expect(visitor.byStream.getCall(0).args[0]).to.equal(projection);
 	});
 
 
-	it('accepts a visitor in sync mode', function(){
-		var visitor = {
-			syncByStream: sinon.spy()
-		}
-
-		var projection = projector
-			.projectStream({
-				name: 'Party',
-				stream: 'Quest',
-				mode: 'sync'
-			});
-
-		projection.acceptVisitor(visitor);
-
-		expect(visitor.syncByStream.getCall(0).args[0]).to.equal(projection);
-	});
 
 	it('should be async by default', function(){
 		var projection = projector
