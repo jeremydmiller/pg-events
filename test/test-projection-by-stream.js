@@ -100,6 +100,10 @@ describe('Projections by Stream', function(){
 
 		var projection = projector.projections['Party'];
 
+		describe('Exposes the events that it responds to', function(){
+			expect(projection.events).to.deep.equal(['QuestStarted', 'TownReached', 'EndOfDay', 'QuestEnded']);
+		});
+
 		describe('Projecting a single event', function(){
 			it('should use the $init function if it exists to start the projection', function(){
 				var initial = projection.applyEvent(null, {$type: 'QuestStarted', location: "Emond's Field"});

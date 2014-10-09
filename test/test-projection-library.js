@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var ProjectionLibrary = require('./../lib/projection-library');
 
-describe.only('ProjectionLibrary', function(){
+describe('ProjectionLibrary', function(){
 	describe('when determining all events', function(){
 		it('should get events from aggregates', function(){
 			var library = new ProjectionLibrary();
