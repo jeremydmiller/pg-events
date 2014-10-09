@@ -78,15 +78,15 @@ describe('The Projector', function(){
 			});
 
 
-		projector.processEvent(store, 1, 'Quest', {$type: 'QuestStarted', location: "Emond's Field"});
-		projector.processEvent(store, 2, 'Quest', {$type: 'QuestStarted', location: "Rivendell"});
+		projector.processEvent(store, {id: 1, type: 'Quest'}, {$type: 'QuestStarted', location: "Emond's Field"});
+		projector.processEvent(store, {id: 2, type: 'Quest'}, {$type: 'QuestStarted', location: "Rivendell"});
 
-		projector.processEvent(store, 1, 'Quest', {$type: 'TownReached', location: "Baerlon", traveled: 4});
-		projector.processEvent(store, 2, 'Quest', {$type: 'TownReached', location: "Moria", traveled: 100});
+		projector.processEvent(store, {id: 1, type: 'Quest'}, {$type: 'TownReached', location: "Baerlon", traveled: 4});
+		projector.processEvent(store, {id: 2, type: 'Quest'}, {$type: 'TownReached', location: "Moria", traveled: 100});
 
-		projector.processEvent(store, 1, 'Quest', {$type: 'EndOfDay', traveled: 13});
+		projector.processEvent(store, {id: 1, type: 'Quest'}, {$type: 'EndOfDay', traveled: 13});
 
-		projector.processEvent(store, 1, 'Quest', {$type: 'QuestEnded', location: 'The Eye of the World'});
+		projector.processEvent(store, {id: 1, type: 'Quest'}, {$type: 'QuestEnded', location: 'The Eye of the World'});
 
 
 	});
