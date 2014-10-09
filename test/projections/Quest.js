@@ -18,6 +18,10 @@ require('../../lib/projections')
 			state.members.sort();
 		},
 
+		FoeDispatched: function(state, evt){
+			// just need another event
+		},
+
 		TownReached: function(state, evt){
 			state.location = evt.location;
 			state.traveled += evt.traveled;

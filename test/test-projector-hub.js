@@ -77,6 +77,7 @@ describe('The Projector', function(){
 				}
 			});
 
+		projector.library.compile();
 
 		projector.processEvent(store, {id: 1, type: 'Quest'}, {$type: 'QuestStarted', location: "Emond's Field"});
 		projector.processEvent(store, {id: 2, type: 'Quest'}, {$type: 'QuestStarted', location: "Rivendell"});

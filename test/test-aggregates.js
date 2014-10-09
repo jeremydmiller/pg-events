@@ -32,6 +32,8 @@ describe('Aggregates', function(){
 			InvoicePaid: function(s, e){},
 		});
 
+		Aggregates.library.compile();
+
 		expect(Aggregates.streamTypeForEvent('QuestStarted')).to.equal('Quest');
 		expect(Aggregates.streamTypeForEvent('QuestFinished')).to.equal('Quest');
 		expect(Aggregates.streamTypeForEvent('UserCreated')).to.equal('User');

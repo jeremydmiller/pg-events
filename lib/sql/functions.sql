@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION pge_apply_projection(name VARCHAR(100), state JSON, e
 	}
 
 	// TODO: validate that the projection exists
-	return plv8.projector.projections[name].applyEvent(state, evt);
+	return plv8.projector.findProjection(name).applyEvent(state, evt);
 $$ LANGUAGE plv8;
 
 

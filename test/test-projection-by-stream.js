@@ -98,9 +98,9 @@ describe('Projections by Stream', function(){
 			});
 
 
-		var projection = projector.projections['Party'];
+		var projection = projector.findProjection('Party');
 
-		describe('Exposes the events that it responds to', function(){
+		it('Exposes the events that it responds to', function(){
 			expect(projection.events).to.deep.equal(['QuestStarted', 'TownReached', 'EndOfDay', 'QuestEnded']);
 		});
 

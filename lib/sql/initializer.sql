@@ -54,6 +54,8 @@ for (var i = 0; i < results.length; i++){
 
 persistor.warmupViewStores(projector.activeProjectionNames());
 
+projector.library.compile(); // this is important to 'plan' out the projections
+
 plv8.projector = projector;
 plv8.store = persistor;
 plv8.cleanAll = function(){
