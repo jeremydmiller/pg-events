@@ -112,6 +112,34 @@ describe('End to End Event Capture and Projections', function(){
 
 	});
 
+	scenario('can update a stream projection from queued events', function(x){
+		var id = uuid.v4();
+
+		x.queueDepthShouldBe(0);
+		x.append(id, 'Quest', e1_1, e1_2, e1_3);
+		x.queueDepthShouldBe(3);
+		x.executeAllQueuedProjectionEvents();
+		x.queueDepthShouldBe(0);
+
+		x.viewShouldBe(id, 'Party2', {
+			active: true,
+			location: 'Baerlon',
+			traveled: 16,
+			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand', 'Thom']
+		});
+
+
+		x.append(id, e1_4, e1_5);
+		x.executeAllQueuedProjectionEvents();
+
+		x.viewShouldBe(id, 'Party2', {
+			active: true,
+			location: 'Shadar Logoth',
+			traveled: 31,
+			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand']
+		});
+	});
+
 	scenario('can queue events that have async projections', function(x){
 		var id = uuid.v4();
 
