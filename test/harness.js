@@ -85,6 +85,21 @@ function Harness(){
 		});
 	}
 
+	this.queueDepthShouldBe = function(expected){
+		this.add(function*(){
+			var count = yield client.rollingBuffer().queuedCount();
+			expect(count).to.equal(expected);
+		});
+	}
+
+	this.queueContentsShouldBe = function(expected){
+		this.add(function*(){
+			var results = yield client.rollingBuffer().queuedEvents();
+
+			expect(results).to.deep.equal(expected);
+		});
+	}
+
 	this.execute = function(client){
 		var steps = this.steps;
 

@@ -2,6 +2,9 @@
 DROP SEQUENCE IF EXISTS pge_rolling_buffer_sequence;
 CREATE SEQUENCE pge_rolling_buffer_sequence START WITH 1;
 
+DROP SEQUENCE IF EXISTS pge_rolling_buffer_dequeue_sequence;
+CREATE SEQUENCE pge_rolling_buffer_dequeue_sequence START WITH 1;
+
 DROP TABLE IF EXISTS pge_rolling_buffer CASCADE;
 CREATE TABLE pge_rolling_buffer (
 	slot				integer CONSTRAINT pk_pge_rolling_buffer PRIMARY KEY,
@@ -72,3 +75,8 @@ BEGIN
 	RETURN id;
 END
 $$ LANGUAGE plpgsql;
+
+
+
+
+
