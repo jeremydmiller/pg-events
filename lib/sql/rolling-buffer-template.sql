@@ -78,5 +78,58 @@ $$ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION pge_bundle_dequeue_message(event JSON, stream UUID, type varchar(100)) RETURNS JSON AS $$
+	return {event: event, stream: {id: stream, type: type}};
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION pge_pop_rolling_buffer() RETURNS JSON as $$
+DECLARE
+	val int := nextval('pge_rolling_buffer_dequeue_sequence');
+	next int;
+	eventId UUID;
+	streamId UUID;
+	type varchar(100);
+	event JSON;
+BEGIN
+	next := val % $SIZE$;
+
+	select 
+		event_id, stream_id into eventId, streamId 
+	from 
+		pge_rolling_buffer
+	where 
+		slot = next AND
+		reference_count = 1
+	FOR SHARE;
+
+	IF NOT FOUND THEN
+		select pg_sleep(.100);
+
+		select 
+			event_id, stream_id into eventId, streamId 
+		from 
+			pge_rolling_buffer
+		where 
+			slot = next AND
+			reference_count = 1
+		FOR SHARE;
+	END IF; 
+
+	-- TODO - do something if this is null
+
+	update pge_rolling_buffer set reference_count = 0, message_id = 0
+		where slot = next;
+
+
+
+	select pge_streams.type into type from pge_streams where pge_streams.id = streamId;
+
+	select pge_events.data into event from pge_events where pge_events.id = eventId;
+
+	return pge_bundle_dequeue_message(event, streamId, type);
+END
+$$ LANGUAGE plpgsql;
+
+
 
 

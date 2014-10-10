@@ -123,4 +123,25 @@ describe('End to End Event Capture and Projections', function(){
 
 	});
 
+	scenario('can pop events from the rolling buffer', function(x){
+		var id = uuid.v4();
+
+		x.queueDepthShouldBe(0);
+
+		x.append(id, 'Quest', e1_1, e1_2, e1_3);
+		x.queueDepthShouldBe(3);
+
+		x.popFromRollingBufferShouldBe({event: e1_1, stream: {id: id, type: 'Quest'}});
+
+		x.queueDepthShouldBe(2);
+
+		x.popFromRollingBufferShouldBe({event: e1_2, stream: {id: id, type: 'Quest'}});
+	
+		x.queueDepthShouldBe(1);
+
+		x.popFromRollingBufferShouldBe({event: e1_3, stream: {id: id, type: 'Quest'}});
+
+		x.queueDepthShouldBe(0);	
+	});
+
 });
