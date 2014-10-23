@@ -1,3 +1,4 @@
+LISTEN pge_event_queued;
 
 DROP SEQUENCE IF EXISTS pge_rolling_buffer_sequence;
 CREATE SEQUENCE pge_rolling_buffer_sequence START WITH 1;
@@ -71,6 +72,10 @@ BEGIN
 				WHERE
 					slot = next AND reference_count = 0;
 		        END IF;
+
+
+        NOTIFY pge_event_queued;
+		--select pg_notify('pge-event-queued');
 
 	RETURN id;
 END

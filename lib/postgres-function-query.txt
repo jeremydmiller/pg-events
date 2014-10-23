@@ -1,0 +1,8 @@
+this.$METHOD$ = function($ARGS$){
+	return this.db.query('select $COMMAND$($QUERYARGS$)', $ARGS$)
+		.then(function(results){
+			if (results.rows.length == 0) return null;
+
+			return results.rows[0].$COMMAND$;
+		});
+}
