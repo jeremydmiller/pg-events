@@ -1,4 +1,5 @@
-var connection = 'postgres://jeremill:@localhost/projections';
+var config = require('../pg-events.json');
+var connection = config.database;
 var projectionFolder = __dirname + '/projections';
 var Promise = require("bluebird");
 var expect = require('chai').expect;

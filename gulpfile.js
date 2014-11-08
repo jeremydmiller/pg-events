@@ -10,5 +10,8 @@ gulp.task('mocha', function(){
         .pipe(mocha({
             reporter: 'spec',
             globals: {}
-        }));
+        }))
+        .once('end', function() {
+          process.exit();
+        });
 });
