@@ -38,12 +38,21 @@ function scenario_only(text, func){
 }
 
 describe('End to End Event Capture with Asynchronous Projections', function(){
+	var daemon = null;
+
 	before(function(){
 		return harness.seed();
 	});
 
 	beforeEach(function(){
+		daemon = harness.asyncDaemon();
+		daemon.startWatching();
+
 		return harness.cleanAll();
+	});
+
+	afterEach(function(){
+		daemon.stopWatching();
 	});
 
 	scenario('can update a stream projection from queued events', function(x){

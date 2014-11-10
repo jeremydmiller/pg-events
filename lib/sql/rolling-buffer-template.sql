@@ -43,6 +43,7 @@ CREATE OR REPLACE FUNCTION pge_append_rolling_buffer(event UUID, stream UUID) RE
 DECLARE
 	id int := nextval('pge_rolling_buffer_sequence');
 	next int;
+	next_str varchar;
 BEGIN
 	next := id % $SIZE$;
 
@@ -70,10 +71,9 @@ BEGIN
 					slot = next AND reference_count = 0;
 		END IF;
 
+		next_str = to_char(next, '999999999999');
 
-
-        NOTIFY pge_event_queued;
-
+		perform pg_notify('pge_event_queued', next_str);
 	RETURN id;
 END
 $$ LANGUAGE plpgsql;

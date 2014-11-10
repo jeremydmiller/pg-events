@@ -151,6 +151,10 @@ module.exports = {
 		return client.config.cleanAll();
 	},
 
+	asyncDaemon: function(){
+		return client.asyncDaemon();
+	},
+
 	scenario: function(configure){
 		var harness = new Harness();
 		configure(harness);
