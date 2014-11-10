@@ -68,7 +68,8 @@ BEGIN
 					reference_count = reference_count + 1
 				WHERE
 					slot = next AND reference_count = 0;
-		        END IF;
+		END IF;
+
 
 
         NOTIFY pge_event_queued;

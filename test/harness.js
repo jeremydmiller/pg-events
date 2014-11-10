@@ -100,12 +100,6 @@ function Harness(){
 		});
 	}
 
-	this.popFromRollingBufferShouldBe = function(expected){
-		this.add(function*(){
-			var results = yield client.rollingBuffer().pop();
-			expect(results).to.deep.equal(expected);
-		});
-	}
 
 	this.executeAllQueuedProjectionEvents = function(){
 		this.add(function*(){
