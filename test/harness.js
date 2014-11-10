@@ -109,13 +109,12 @@ function Harness(){
 
 	this.executeAllQueuedProjectionEvents = function(){
 		this.add(function*(){
-			var count = yield client.rollingBuffer().queuedCount();
-			while (count > 0){
-				yield client.rollingBuffer().processQueuedEvent();
-				count = yield client.rollingBuffer().queuedCount();
-			}
+			yield client.asyncDaemon().processAll();
 		});
 	}
+
+
+
 
 	this.execute = function(client){
 		var steps = this.steps;

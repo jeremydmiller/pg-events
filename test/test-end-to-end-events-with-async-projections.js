@@ -25,7 +25,6 @@ var e3_2 = quest.EndOfDay(7);
 var e3_3 = quest.TownReached('Moria', 111);
 var e3_4 = quest.MembersDeparted('Moria', ['Gandolf']);
 
-
 function scenario(text, func){
 	it(text, function(){
 		return harness.scenario(func);
@@ -38,7 +37,7 @@ function scenario_only(text, func){
 	});
 }
 
-describe('End to End Event Capture and Projections', function(){
+describe('End to End Event Capture with Asynchronous Projections', function(){
 	before(function(){
 		return harness.seed();
 	});
@@ -47,54 +46,16 @@ describe('End to End Event Capture and Projections', function(){
 		return harness.cleanAll();
 	});
 
-	scenario('can capture events for a new stream', function(x){
+	scenario('can update a stream projection from queued events', function(x){
 		var id = uuid.v4();
 
+		x.queueDepthShouldBe(0);
 		x.append(id, 'Quest', e1_1, e1_2, e1_3);
-		x.stream(id, function(x){
-			expect(x.events[0]).to.deep.equal(e1_1);
-			expect(x.events[1]).to.deep.equal(e1_2);
-			expect(x.events[2]).to.deep.equal(e1_3);
+		x.queueDepthShouldBe(3);
+		x.executeAllQueuedProjectionEvents();
+		x.queueDepthShouldBe(0);
 
-			expect(x.version).to.equal(3);
-			expect(x.type).to.equal('Quest');
-		});
-	});
-
-
-	scenario('can capture events for a new stream and auto assign the id', function(x){
-		x.append('Quest', e1_1, e1_2, e1_3);
-		x.stream(function(s){
-			expect(s.events[0]).to.deep.equal(e1_1);
-			expect(s.events[1]).to.deep.equal(e1_2);
-			expect(s.events[2]).to.deep.equal(e1_3);
-
-			expect(s.version).to.equal(3);
-			expect(s.type).to.equal('Quest');
-		});
-	});
-
-	scenario('can append events to an existing stream', function(x){
-		var id = uuid.v4();
-
-		x.append(id, 'Quest', e1_1);
-		x.append(id, e1_2, e1_3);
-
-		x.stream(function(s){
-			expect(s.events[0]).to.deep.equal(e1_1);
-			expect(s.events[1]).to.deep.equal(e1_2);
-			expect(s.events[2]).to.deep.equal(e1_3);
-
-			expect(s.version).to.equal(3);
-			expect(s.type).to.equal('Quest');
-		});
-	});
-
-	scenario('can update a view across a stream to reflect latest', function(x){
-		var id = uuid.v4();
-
-		x.append(id, 'Quest', e1_1, e1_2, e1_3);
-		x.viewShouldBe(id, 'Party', {
+		x.viewShouldBe(id, 'Party2', {
 			active: true,
 			location: 'Baerlon',
 			traveled: 16,
@@ -103,15 +64,24 @@ describe('End to End Event Capture and Projections', function(){
 
 
 		x.append(id, e1_4, e1_5);
-		x.viewShouldBe(id, 'Party', {
+		x.executeAllQueuedProjectionEvents();
+
+		x.viewShouldBe(id, 'Party2', {
 			active: true,
 			location: 'Shadar Logoth',
 			traveled: 31,
 			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand']
 		});
-
 	});
 
+	scenario('can queue events that have async projections', function(x){
+		var id = uuid.v4();
 
+		x.queueDepthShouldBe(0);
+		x.append(id, 'Quest', e1_1, e1_2, e1_3);
+		x.queueDepthShouldBe(3);
 
+		x.queueContentsShouldBe([{event: e1_1.$id, stream: id}, {event: e1_2.$id, stream: id}, {event: e1_3.$id, stream: id} ])
+
+	});
 });
