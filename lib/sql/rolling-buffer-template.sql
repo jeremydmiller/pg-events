@@ -78,7 +78,6 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-
 CREATE OR REPLACE VIEW pge_queued_projection_events_vw AS
 select
   pge_rolling_buffer.slot,
@@ -98,3 +97,14 @@ ORDER BY
   pge_rolling_buffer.message_id;
 
 
+CREATE OR REPLACE FUNCTION pge_process_queued_event(event JSON, type varchar, id UUID) RETURNS VOID AS $$
+	if (plv8.projector == null){
+		plv8.execute('select pge_initialize()');
+	}
+
+	// TODO: throw if event is null, or event.$type is null
+
+	var plan = plv8.projector.library.delayedPlanFor(event.$type);
+
+	plan.execute(plv8.store, {id: id, type: type}, event);
+$$ LANGUAGE plv8;

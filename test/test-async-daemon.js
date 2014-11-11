@@ -38,7 +38,7 @@ function scenario_only(text, func){
 	});
 }
 
-describe('End to End Event Capture with Asynchronous Projections', function(){
+describe.only('End to End Event Capture with Asynchronous Projections', function(){
 	var daemon = null;
 
 	before(function(){
@@ -56,7 +56,7 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 		daemon.stopWatching();
 	});
 
-	scenario_only('can process an aggregate projection across streams', function(x){
+	scenario('can process an aggregate projection across streams', function(x){
 		x.append(uuid.v4(), 'Quest', e1_1, e1_2, e1_3, e1_4, e1_5);
 		x.append(uuid.v4(), 'Quest', e2_1, e2_2, e2_3, e2_4, e2_5);
 		x.append(uuid.v4(), 'Quest', e3_1, e3_2, e3_3, e3_4);

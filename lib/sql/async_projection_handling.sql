@@ -1,16 +1,3 @@
-
-CREATE OR REPLACE FUNCTION pge_process_queued_event(event JSON, type varchar, id UUID) RETURNS VOID AS $$
-	if (plv8.projector == null){
-		plv8.execute('select pge_initialize()');
-	}
-
-	// TODO: throw if event is null, or event.$type is null
-
-	var plan = plv8.projector.library.delayedPlanFor(event.$type);
-
-	plan.execute(plv8.store, {id: id, type: type}, event);
-$$ LANGUAGE plv8;
-
 CREATE OR REPLACE FUNCTION pge_mark_processed(slot_id int) RETURNS VOID AS $$
 BEGIN
 	UPDATE pge_rolling_buffer 
@@ -23,11 +10,16 @@ END
 $$ LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION pge_process_async_projections_result(processed int, highest int) RETURNS JSON AS $$
+	return {processed: processed, highest: highest};
+$$ LANGUAGE plv8;
 
-CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS int AS $$
+CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
 DECLARE
   last_slot int := 0;
   events RECORD;
+  last int;
+  result JSON;
 BEGIN
 
 
@@ -39,9 +31,14 @@ BEGIN
   	perform pge_process_queued_event(events.data, events.stream_type, events.stream_id);
   	perform pge_mark_processed(events.slot);
 
-
+  	
   END LOOP;
 
-  return last_slot;
+  select max(message_id) into last from pge_rolling_buffer;
+
+  select pge_process_async_projections_result(last_slot, last) into result;
+
+  return result;
 END
 $$ LANGUAGE plpgsql;
+
