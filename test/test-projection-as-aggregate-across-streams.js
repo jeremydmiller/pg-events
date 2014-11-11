@@ -25,6 +25,10 @@ describe('Aggregates across Streams', function(){
 			}
 		});
 
+	it('declares itself to be async', function(){
+		expect(projection.mode).to.equal('async');
+	});
+
 	it('should accept a visitor', function(){
 		var visitor = {
 			aggregate: sinon.spy()
