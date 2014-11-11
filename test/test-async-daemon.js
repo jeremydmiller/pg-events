@@ -28,51 +28,48 @@ var e3_4 = quest.MembersDeparted('Moria', ['Gandolf']);
 
 function scenario(text, func){
 	it(text, function(){
+		this.timeout(10000);
+
 		return harness.scenario(func);
 	});
 }
 
 function scenario_only(text, func){
 	it.only(text, function(){
+		this.timeout(10000);
+
 		return harness.scenario(func);
 	});
 }
 
-describe.only('End to End Event Capture with Asynchronous Projections', function(){
-	var daemon = null;
-
+describe('End to End Event Capture with Asynchronous Projections', function(){
 	before(function(){
 		return harness.seed();
 	});
 
 	beforeEach(function(){
-		daemon = harness.asyncDaemon();
-		daemon.startWatching();
-
 		return harness.cleanAll();
 	});
 
-	afterEach(function(){
-		daemon.stopWatching();
-	});
-
+/*
 	scenario('can process an aggregate projection across streams', function(x){
+		x.startAsyncDaemon();
+
 		x.append(uuid.v4(), 'Quest', e1_1, e1_2, e1_3, e1_4, e1_5);
 		x.append(uuid.v4(), 'Quest', e2_1, e2_2, e2_3, e2_4, e2_5);
 		x.append(uuid.v4(), 'Quest', e3_1, e3_2, e3_3, e3_4);
 
-		x.waitForNonStaleResults(daemon);
+		x.waitForNonStaleResults();
 
 		// the following are the events that apply to the aggregation
 		// for 'Traveled'
 		var events = [e1_2, e1_3, e1_5, e2_2, e2_3, e2_5, e3_2, e3_3];
-		var traveled = _.reduce(events, function(sum, num){
-			return sum + num;
-		});
+		// the sum is 216
 
-		x.aggregateShouldBe('Traveled', {traveled: traveled});
+		x.aggregateShouldBe('Traveled', {traveled: 216});
+
 	});
-
+*/
 	scenario('can update a stream projection from queued events', function(x){
 		var id = uuid.v4();
 
@@ -99,6 +96,8 @@ describe.only('End to End Event Capture with Asynchronous Projections', function
 			traveled: 31,
 			members: ['Egwene', 'Mat', 'Moiraine', 'Perrin', 'Rand']
 		});
+
+		x.aggregateShouldBe('Traveled', {traveled: 31});
 	});
 
 	scenario('can queue events that have async projections', function(x){

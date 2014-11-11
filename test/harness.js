@@ -115,9 +115,16 @@ function Harness(){
 		});
 	}
 
-	this.waitForNonStaleResults = function(daemon){
+	this.startAsyncDaemon = function(){
 		this.add(function*(){
-			yield daemon.waitForNonStaleResults();
+			client.daemon = client.asyncDaemon();
+			client.daemon.startWatching();
+		});
+	}
+
+	this.waitForNonStaleResults = function(){
+		this.add(function*(){
+			yield client.daemon.waitForNonStaleResults();
 		});
 	}
 
@@ -130,7 +137,11 @@ function Harness(){
 			for (var i = 0; i < steps.length; i++){
 				yield* steps[i];
 			}
-		})();
+		})().finally(function(){
+			if (client.daemon){
+				return client.daemon.stopWatching();
+			}
+		});
 	}
 }
 
