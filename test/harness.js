@@ -45,7 +45,7 @@ function Harness(){
 
 	this.view = function(id, view, func){
 		this.add(function*(){
-			var state = yield client.fetchView(id, view);
+			var state = yield client.findView(id, view);
 			func(state);
 		});
 	}
@@ -100,6 +100,14 @@ function Harness(){
 		});
 	}
 
+	this.aggregateShouldBe = function(name, expected){
+		this.add(function*(){
+			var results = yield client.findView(name);
+
+			expect(results).to.deep.equal(expected);
+		});
+	}
+
 
 	this.executeAllQueuedProjectionEvents = function(){
 		this.add(function*(){
@@ -107,7 +115,11 @@ function Harness(){
 		});
 	}
 
-
+	this.waitForNonStaleResults = function(daemon){
+		this.add(function*(){
+			yield daemon.waitForNonStaleResults();
+		});
+	}
 
 
 	this.execute = function(client){

@@ -3,6 +3,7 @@ var client = require('../lib/index');
 var expect = require('chai').expect;
 var quest = require('./quest-events');
 var harness = require('./harness');
+var _ = require('lodash');
 
 var e1_1 = quest.QuestStarted("Emond's Field", ['Rand', 'Perrin', 'Mat', 'Thom', 'Egwene', 'Moiraine']);
 var e1_2 = quest.EndOfDay(5);
@@ -53,6 +54,23 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 
 	afterEach(function(){
 		daemon.stopWatching();
+	});
+
+	scenario_only('can process an aggregate projection across streams', function(x){
+		x.append(uuid.v4(), 'Quest', e1_1, e1_2, e1_3, e1_4, e1_5);
+		x.append(uuid.v4(), 'Quest', e2_1, e2_2, e2_3, e2_4, e2_5);
+		x.append(uuid.v4(), 'Quest', e3_1, e3_2, e3_3, e3_4);
+
+		x.waitForNonStaleResults(daemon);
+
+		// the following are the events that apply to the aggregation
+		// for 'Traveled'
+		var events = [e1_2, e1_3, e1_5, e2_2, e2_3, e2_5, e3_2, e3_3];
+		var traveled = _.reduce(events, function(sum, num){
+			return sum + num;
+		});
+
+		x.aggregateShouldBe('Traveled', {traveled: traveled});
 	});
 
 	scenario('can update a stream projection from queued events', function(x){

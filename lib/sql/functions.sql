@@ -40,6 +40,18 @@ CREATE OR REPLACE FUNCTION pge_find_view(id UUID, type varchar(100)) RETURNS JSO
 $$ LANGUAGE plv8;
 
 
+
+CREATE OR REPLACE FUNCTION pge_find_aggregate_view(view_name varchar(100)) RETURNS JSON AS $$
+DECLARE
+	view JSON;
+BEGIN
+	SELECT data into view FROM pge_aggregates WHERE name = view_name;
+
+	return view;
+END
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION pge_fetch_latest_aggregate(id UUID) RETURNS JSON AS $$
 	if (plv8.events == null){
 		plv8.execute('select pge_initialize()');
