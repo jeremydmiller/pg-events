@@ -23,7 +23,7 @@ DECLARE
 BEGIN
 
 
-  FOR events IN SELECT * FROM pge_queued_projection_events_vw LIMIT 25 LOOP
+  FOR events IN SELECT * FROM pge_queued_projection_events_vw LIMIT 25 FOR SHARE LOOP
   	last_slot := events.slot;
 
   	-- TODO: add some error handling somehow

@@ -44,15 +44,17 @@ function scenario_only(text, func){
 
 describe('End to End Event Capture with Asynchronous Projections', function(){
 	before(function(){
+		this.timeout(10000);
 		return harness.seed();
 	});
 
 	beforeEach(function(){
+		this.timeout(10000);
 		return harness.cleanAll();
 	});
 
 /*
-	scenario('can process an aggregate projection across streams', function(x){
+	scenario_only('can process an aggregate projection across streams', function(x){
 		x.startAsyncDaemon();
 
 		x.append(uuid.v4(), 'Quest', e1_1, e1_2, e1_3, e1_4, e1_5);
