@@ -53,7 +53,7 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 		return harness.cleanAll();
 	});
 
-/*
+
 	scenario_only('can process an aggregate projection across streams', function(x){
 		x.startAsyncDaemon();
 
@@ -71,7 +71,7 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 		x.aggregateShouldBe('Traveled', {traveled: 216});
 
 	});
-*/
+
 	scenario('can update a stream projection from queued events', function(x){
 		var id = uuid.v4();
 
