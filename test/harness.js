@@ -124,7 +124,7 @@ function Harness(){
 
 	this.waitForNonStaleResults = function(){
 		this.add(function*(){
-			yield client.daemon.waitForNonStaleResults();
+			yield client.waitForNonStaleResults(10000);
 		});
 	}
 

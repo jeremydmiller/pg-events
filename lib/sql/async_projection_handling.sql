@@ -1,44 +1,40 @@
-CREATE OR REPLACE FUNCTION pge_mark_processed(slot_id int) RETURNS VOID AS $$
-BEGIN
-	UPDATE pge_rolling_buffer 
-	SET 
-		reference_count = 0, 
-		message_id = 0
-	WHERE 
-		slot = slot_id;
-END
-$$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION pge_rolling_buffer_status() RETURNS JSON AS $$
+  if (plv8.projector == null){
+    plv8.execute('select pge_initialize()');
+  }
 
-CREATE OR REPLACE FUNCTION pge_process_async_projections_result(processed int, highest int) RETURNS JSON AS $$
-	return {processed: processed, highest: highest};
+  return plv8.store.queueStatus();
 $$ LANGUAGE plv8;
 
+
 CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
-DECLARE
-  last_slot int := 0;
-  events RECORD;
-  last int;
-  result JSON;
-BEGIN
+  if (plv8.projector == null){
+    plv8.execute('select pge_initialize()');
+  }
 
+  var queued = plv8.store.queuedEvents();
 
-  FOR events IN SELECT * FROM pge_queued_projection_events_vw LIMIT 25 FOR SHARE LOOP
-  	last_slot := events.slot;
+  for (var i = 0; i < queued.length; i++){
+    var queuedEvent = queued[i];
+    
+    // TODO -- trap exceptions
+    plv8.subtransaction(function(){
+      // TODO: throw if event is null, or event.$type is null
 
-  	-- TODO: add some error handling somehow
+      var event = queued[i].data;
+      var type = queued[i].data.$type;
+      var id = queued[i].stream_id;
+      var slot = queued[i].slot;
 
-  	perform pge_process_queued_event(events.data, events.stream_type, events.stream_id);
-  	perform pge_mark_processed(events.slot);
+      var plan = plv8.projector.library.delayedPlanFor(type);
 
-  	
-  END LOOP;
+      plan.execute(plv8.store, {id: id, type: type}, event);
 
-  select max(message_id) into last from pge_rolling_buffer;
+      plv8.store.markQueuedEventAsProcessed(slot);
+    });
+  }
 
-  select pge_process_async_projections_result(last_slot, last) into result;
-
-  return result;
-END
-$$ LANGUAGE plpgsql;
+  return plv8.store.queueStatus();
+$$ LANGUAGE plv8;
 
