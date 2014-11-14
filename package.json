@@ -20,6 +20,9 @@
   "files": [
     "lib"
   ],
+  "scripts": {
+    "test": "gulp mocha --harmony"
+  },
   "dependencies": {
     "minimist": "^0.2.0",
     "node-uuid": "^1.4.1",
