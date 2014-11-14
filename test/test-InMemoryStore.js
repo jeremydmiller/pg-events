@@ -52,4 +52,10 @@ describe('InMemoryStore', function(){
 		expect(store.queue[2]).to.deep.equal({id: 3, stream: 1});
 		expect(store.queue[5]).to.deep.equal({id: 6, stream: 3});
 	});
+
+	it('can store errors', function(){
+		store.storeProjectionError(1, 'Quest', 'Foo is bad');
+
+		expect(store.errors[0]).to.deep.equal({id: 1, projection: 'Quest', error: 'Foo is bad'});
+	});
 });
