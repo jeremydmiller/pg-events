@@ -18,20 +18,15 @@ CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
   for (var i = 0; i < queued.length; i++){
     var queuedEvent = queued[i];
     
+    // TODO: throw if event is null, or event.$type is null
+
+    var event = queued[i].data;
+    var id = queued[i].stream_id;
+    var slot = queued[i].slot;
+
     // TODO -- trap exceptions
     plv8.subtransaction(function(){
-      // TODO: throw if event is null, or event.$type is null
-
-      var event = queued[i].data;
-      var type = queued[i].data.$type;
-      var id = queued[i].stream_id;
-      var slot = queued[i].slot;
-
-      var plan = plv8.projector.library.delayedPlanFor(type);
-
-      plan.execute(plv8.store, {id: id, type: type}, event);
-
-      plv8.store.markQueuedEventAsProcessed(slot);
+      plv8.events.processAsyncProjection(event, id, slot);
     });
   }
 

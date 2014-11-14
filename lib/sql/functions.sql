@@ -3,7 +3,6 @@ CREATE OR REPLACE FUNCTION pge_clean_all_events() RETURNS VOID AS $$
 		plv8.execute('select pge_initialize()');
 	}
 
-	//plv8.execute('select pge_reset_rolling_buffer()');
 	return plv8.cleanAll();
 $$ LANGUAGE plv8;
 
