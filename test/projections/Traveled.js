@@ -12,6 +12,10 @@ require("../../lib/projections")
 		},
 
 		EndOfDay: function(state, evt){
+			if (evt.traveled < 0){
+				throw new Error('you cannot go backwards!');
+			}
+
 			state.traveled += evt.traveled;
 		}
 	});

@@ -26,6 +26,8 @@ var e3_2 = quest.EndOfDay(7);
 var e3_3 = quest.TownReached('Moria', 111);
 var e3_4 = quest.MembersDeparted('Moria', ['Gandolf']);
 
+var badEvent = quest.EndOfDay(-10);
+
 function scenario(text, func){
 	it(text, function(){
 		this.timeout(10000);
@@ -92,6 +94,8 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 		x.append(id, e1_4, e1_5);
 		x.executeAllQueuedProjectionEvents();
 
+		x.shouldBeNoRecordedErrorsFromAsyncProjectionProcessing();
+
 		x.viewShouldBe(id, 'Party2', {
 			active: true,
 			location: 'Shadar Logoth',
@@ -100,6 +104,25 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 		});
 
 		x.aggregateShouldBe('Traveled', {traveled: 31});
+	});
+
+	scenario('can trap projection errors as async projections are processed', function(x){
+		var id = uuid.v4();
+
+		x.append(id, 'Quest', e1_1, e1_2, e1_3);
+
+		// these events will fail in the 'Traveled' projection
+		x.append(id, quest.EndOfDay(-10), quest.EndOfDay(-5));
+
+		x.executeAllQueuedProjectionEvents(function(errors){
+			expect(errors.length).to.equal(2);
+
+			var firstError = errors[0];
+			expect(firstError.projection).to.equal('Traveled');
+			expect(firstError.error).to.equal('Error: you cannot go backwards!');
+
+
+		});
 	});
 
 	scenario('can queue events that have async projections', function(x){

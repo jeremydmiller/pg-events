@@ -60,6 +60,7 @@ plv8.projector = projector;
 plv8.store = persistor;
 plv8.cleanAll = function(){
 	plv8.execute('truncate table pge_streams CASCADE;');
+	plv8.execute('truncate table pge_projection_errors;');
 	persistor.cleanAll();
 }
 

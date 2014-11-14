@@ -109,10 +109,22 @@ function Harness(){
 		});
 	}
 
-
-	this.executeAllQueuedProjectionEvents = function(){
+	this.shouldBeNoRecordedErrorsFromAsyncProjectionProcessing = function(){
 		this.add(function*(){
-			yield client.asyncDaemon().processAll();
+			var results = yield client.query('select * from pge_projection_errors', []);
+			if (results.rows.length > 0){
+				throw new Error('Async projection errors detected! --> ' + JSON.stringify(results.rows));
+			}
+		});
+	}
+
+
+	this.executeAllQueuedProjectionEvents = function(func){
+		this.add(function*(){
+			var errors = yield client.asyncDaemon().processAll();
+			if (func){
+				func(errors);
+			}
 		});
 	}
 

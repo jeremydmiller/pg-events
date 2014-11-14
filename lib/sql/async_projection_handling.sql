@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
   }
 
   var queued = plv8.store.queuedEvents();
+  var errors = [];
 
   for (var i = 0; i < queued.length; i++){
     var queuedEvent = queued[i];
@@ -24,12 +25,17 @@ CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
     var id = queued[i].stream_id;
     var slot = queued[i].slot;
 
+
+
     // TODO -- trap exceptions
     plv8.subtransaction(function(){
-      plv8.events.processAsyncProjection(event, id, slot);
+      plv8.events.processAsyncProjection(event, id, slot, errors);
     });
   }
 
-  return plv8.store.queueStatus();
+  var result = plv8.store.queueStatus();
+  result.errors = errors;
+
+  return result;
 $$ LANGUAGE plv8;
 

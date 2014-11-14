@@ -19,6 +19,13 @@ CREATE TABLE pge_events (
 	CONSTRAINT pk_pge_events_stream_and_version UNIQUE(stream_id, version)
 );
 
+DROP TABLE IF EXISTS pge_projection_errors;
+CREATE TABLE pge_projection_errors (
+	id 			uuid CONSTRAINT pk_pge_projection_errors PRIMARY KEY,
+	event_id	uuid NOT NULL,
+	projection 	varchar(100) NOT NULL,
+	error 		varchar(1000) NOT NULL
+);
 
 
 -- TODO: add an index on id and type. 
