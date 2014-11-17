@@ -59,6 +59,14 @@ CREATE OR REPLACE FUNCTION pge_fetch_latest_aggregate(id UUID) RETURNS JSON AS $
 	return plv8.events.buildAggregate(id);
 $$ LANGUAGE plv8;
 
+CREATE OR REPLACE FUNCTION pge_rebuild_naive() RETURNS JSON AS $$
+	if (plv8.events == null){
+		plv8.execute('select pge_initialize()');
+	}
+
+	return plv8.events.replayAllEvents();
+$$ LANGUAGE plv8;
+
 
 CREATE OR REPLACE FUNCTION pge_apply_projection(name VARCHAR(100), state JSON, evt JSON) RETURNS JSON AS $$
 	if (plv8.events == null){

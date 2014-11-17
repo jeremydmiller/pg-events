@@ -86,6 +86,12 @@ function Harness(){
 		});
 	}
 
+	this.withClient = function(func){
+		this.add(function*(){
+			yield func(client);
+		});
+	}
+
 	this.queueDepthShouldBe = function(expected){
 		this.add(function*(){
 			var count = yield client.rollingBuffer().queuedCount();

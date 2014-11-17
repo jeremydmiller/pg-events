@@ -61,7 +61,7 @@ CREATE TABLE pge_aggregates (
 
 CREATE OR REPLACE VIEW pge_all_events_vw AS
 select
-  pge_streams id,
+  pge_streams.id id,
   pge_streams.type as type,
   pge_events.data as event
 FROM
