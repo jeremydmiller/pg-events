@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var ProjectionLibrary = require('./../lib/projection-library');
+var _ = require('lodash');
 
 describe('ProjectionLibrary', function(){
 	describe('when determining all events', function(){
@@ -32,6 +33,33 @@ describe('ProjectionLibrary', function(){
 
 			expect(library.allEvents()).to.deep.equal(['a', 'b', 'c', 'd', 'e']);
 		});
+	});
+
+	function FakeProjection(name, mode, events){
+		this.name = name;
+		this.mode = mode;
+		this.events = events;
+
+		this.acceptVisitor = function(v){
+			v.byStream(this);
+		}
+	}
+
+	it.only('builds a combined plan for rebuilding', function(){
+		var library = new ProjectionLibrary();
+
+
+		library.add(new FakeProjection('foo', 'sync', ['a', 'b', 'c']));
+		library.add(new FakeProjection('bar', 'async', ['b', 'c', 'd']));
+		library.add(new FakeProjection('baz', 'async', ['b', 'c', 'd']));
+		library.add(new FakeProjection('boo', 'live', ['a', 'b', 'c']));
+
+		library.compile();
+
+		var plan = library.replayPlanFor('b');
+		var names = _.map(plan.projections, function(x){return x.name;});
+
+		expect(names).to.deep.equal(['foo', 'bar', 'baz']);
 	});
 
 	it('can get stream type for event', function(){
