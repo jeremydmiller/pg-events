@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 DROP TABLE IF EXISTS pge_streams CASCADE;
 CREATE TABLE pge_streams (
 	id					uuid CONSTRAINT pk_pge_streams PRIMARY KEY,
@@ -55,8 +57,19 @@ CREATE TABLE pge_aggregates (
 	data		json NOT NULL
 );
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
+CREATE OR REPLACE VIEW pge_all_events_vw AS
+select
+  pge_streams id,
+  pge_streams.type as type,
+  pge_events.data as event
+FROM
+  pge_streams,
+  pge_events
+WHERE
+  pge_events.stream_id = pge_streams.id
+ORDER BY
+  pge_events.timestamp;
 
 

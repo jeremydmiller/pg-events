@@ -45,7 +45,7 @@ describe('ProjectionLibrary', function(){
 		}
 	}
 
-	it.only('builds a combined plan for rebuilding', function(){
+	it('builds a combined plan for rebuilding', function(){
 		var library = new ProjectionLibrary();
 
 

@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION pge_clean_all_events() RETURNS VOID AS $$
 		plv8.execute('select pge_initialize()');
 	}
 
-	return plv8.cleanAll();
+	return plv8.store.cleanAll();
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION pge_fetch_stream(id UUID) RETURNS JSON AS $$
