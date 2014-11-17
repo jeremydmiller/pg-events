@@ -53,7 +53,7 @@ describe('Replaying projections and events', function(){
 		return harness.cleanAll();
 	});
 
-	scenario_only('can replay the projections from the stored events', function(x){
+	scenario('can replay the projections from the stored events', function(x){
 		var id = uuid.v4();
 
 		x.append(id, 'Quest', e1_1, e1_2, e1_3);
