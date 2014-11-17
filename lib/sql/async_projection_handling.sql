@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
   }
 
   var result = plv8.store.queueStatus();
+  result.count = queued.length;
   result.errors = errors;
 
   return result;

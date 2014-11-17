@@ -55,7 +55,8 @@ describe('End to End Event Capture with Asynchronous Projections', function(){
 		return harness.cleanAll();
 	});
 
-/*
+/* leaves too many database locks laying around. Not sure it requires any work now,
+but certainly later
 	scenario('can process an aggregate projection across streams', function(x){
 		x.startAsyncDaemon();
 
