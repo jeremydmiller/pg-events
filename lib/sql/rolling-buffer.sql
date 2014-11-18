@@ -14,20 +14,56 @@ CREATE TABLE pge_rolling_buffer (
 );
 
 
+CREATE OR REPLACE FUNCTION pge_buffer_size() RETURNS integer AS $$
+DECLARE
+	size integer;
+BEGIN
+	select buffer_size into size from pge_options LIMIT 1;
+
+	IF size IS NULL THEN
+		return 200;
+	END IF;
+
+	return size;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION pge_reset_rolling_buffer_size(size int) RETURNS VOID AS $$
+DECLARE
+	current integer;
+BEGIN
+	UPDATE pge_options set buffer_size = size;
+
+	IF NOT FOUND THEN
+		insert into pge_options (buffer_size) values (size);
+	END IF; 
+
+	select count(*) into current from pge_rolling_buffer;
+	IF current < size THEN
+		perform pge_seed_rolling_buffer();
+	ELSE
+		delete from pge_rolling_buffer where slot > size;
+	END IF;
+END	
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION pge_seed_rolling_buffer() RETURNS VOID AS $$
 DECLARE
-	size integer := $SIZE$;
+	size integer;
 	i integer := 0;
 	empty UUID := uuid_nil();
 	timestamp timestamp := current_timestamp;
 	current integer;
 BEGIN
-	WHILE i < $SIZE$ LOOP
+	size := pge_buffer_size();
+
+	SELECT count(*) into i FROM pge_rolling_buffer;
+
+	WHILE i < size LOOP
 		insert into pge_rolling_buffer 
 			(slot, message_id, timestamp, event_id, stream_id, reference_count)
 		values
-			(i, 0, timestamp, empty, empty, 0);
+			(i + 1, 0, timestamp, empty, empty, 0);
 
 		i := i + 1;
 	END LOOP;
@@ -44,8 +80,10 @@ DECLARE
 	id int := nextval('pge_rolling_buffer_sequence');
 	next int;
 	next_str varchar;
+	size int;
 BEGIN
-	next := id % $SIZE$;
+	size := pge_buffer_size();
+	next := id % size;
 
 	update pge_rolling_buffer
 		SET

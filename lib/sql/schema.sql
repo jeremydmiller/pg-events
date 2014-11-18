@@ -1,5 +1,10 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+DROP TABLE IF EXISTS pge_options CASCADE;
+CREATE TABLE pge_options (
+	buffer_size integer
+);
+
 DROP TABLE IF EXISTS pge_streams CASCADE;
 CREATE TABLE pge_streams (
 	id					uuid CONSTRAINT pk_pge_streams PRIMARY KEY,
@@ -30,15 +35,6 @@ CREATE TABLE pge_projection_errors (
 );
 
 
--- TODO: add an index on id and type. 
-DROP TABLE IF EXISTS pge_projections CASCADE;
-CREATE TABLE pge_projections (
-	id			uuid,
-	type 		varchar(100) NOT NULL,
-	data		json NOT NULL,
-	CONSTRAINT pk_pge_projections PRIMARY KEY(id, type)
-);
-
 DROP TABLE IF EXISTS pge_projection_definitions CASCADE;
 CREATE TABLE pge_projection_definitions (
 	name			varchar(100) CONSTRAINT pk_pge_projection_definitions PRIMARY KEY,
@@ -56,8 +52,6 @@ CREATE TABLE pge_aggregates (
 	name		varchar(100) CONSTRAINT pk_pge_aggregates PRIMARY KEY,
 	data		json NOT NULL
 );
-
-
 
 CREATE OR REPLACE VIEW pge_all_events_vw AS
 select
