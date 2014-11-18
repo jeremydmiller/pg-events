@@ -35,7 +35,13 @@ CREATE OR REPLACE FUNCTION pge_find_view(id UUID, type varchar(100)) RETURNS JSO
 		plv8.execute('select pge_initialize()');
 	}
 
-	return plv8.store.findView(type, id);
+	try {
+		return plv8.store.findView(type, id);
+	}
+	catch (e){
+		throw new Error("Failed while trying to find view '" + type + "' with id: " + id + " --> " + e);
+	}
+	
 $$ LANGUAGE plv8;
 
 
@@ -56,7 +62,12 @@ CREATE OR REPLACE FUNCTION pge_fetch_latest_aggregate(id UUID) RETURNS JSON AS $
 		plv8.execute('select pge_initialize()');
 	}
 
-	return plv8.events.buildAggregate(id);
+	try {
+		return plv8.events.buildAggregate(id);
+	}
+	catch (e){
+		throw new Error('Error fetching the latest aggregate for ' + id + ' --> ' + e);
+	}
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION pge_rebuild_naive() RETURNS JSON AS $$
@@ -73,8 +84,13 @@ CREATE OR REPLACE FUNCTION pge_apply_projection(name VARCHAR(100), state JSON, e
 		plv8.execute('select pge_initialize()');
 	}
 
-	// TODO: validate that the projection exists
-	return plv8.projector.findProjection(name).applyEvent(state, evt);
+	var projection = plv8.projector.findProjection(name);
+
+	if (projection == null){
+		throw new Error("No projection matches the name '" + name + "'");
+	}
+
+	return projection.applyEvent(state, evt);
 $$ LANGUAGE plv8;
 
 

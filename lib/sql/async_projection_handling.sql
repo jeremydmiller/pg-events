@@ -4,7 +4,13 @@ CREATE OR REPLACE FUNCTION pge_rolling_buffer_status() RETURNS JSON AS $$
     plv8.execute('select pge_initialize()');
   }
 
-  return plv8.store.queueStatus();
+  try {
+    return plv8.store.queueStatus();
+  }
+  catch (e){
+    throw new Error('Failed in postgres-store.queueStatus() --> ' + e);
+  }
+  
 $$ LANGUAGE plv8;
 
 
@@ -19,15 +25,22 @@ CREATE OR REPLACE FUNCTION pge_process_async_projections() RETURNS JSON AS $$
   for (var i = 0; i < queued.length; i++){
     var queuedEvent = queued[i];
     
-    // TODO: throw if event is null, or event.$type is null
-
     var event = queued[i].data;
+
+    if (event == null){
+      throw new Error('No event data --> ' + JSON.stringify(queuedEvent));
+    }
+
+    if (event.$type == null){
+      throw new Error('No event type supplied --> ' + JSON.stringify(queuedEvent));
+    }
+
     var id = queued[i].stream_id;
     var slot = queued[i].slot;
 
 
 
-    // TODO -- trap exceptions
+    // The EventStore is trapping and logging errors itself.
     plv8.subtransaction(function(){
       plv8.events.processAsyncProjection(event, id, slot, errors);
     });
